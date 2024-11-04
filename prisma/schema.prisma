@@ -1,0 +1,112 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model Client{
+  id String @id @default(uuid())
+  firstName String @db.Text
+  lastName String @db.Text
+  cin String @db.Text @unique()
+  email String @db.Text @unique()
+  phone String @db.Text
+  address String @db.Text
+  city String @db.Text
+  cars Car[] 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model Car {
+  id String @id @default(uuid())
+  name String @db.Text
+  model String @db.Text
+  chassisNumber String @db.Text
+  engineNumber String @db.Text
+  manifacturedBy String @db.Text
+  type String @db.Text
+  color String @db.Text
+  device Device?
+  profileImage String @db.Text
+  
+  clientId String? @db.Text 
+  client Client? @relation(fields : [clientId],references: [id])
+  @@index([clientId])
+}
+
+model Device{
+  id String @id @default(uuid())
+  imei String @db.Text @unique()
+  firmwareVersion String @db.Text
+  simCardNumber String @db.Text
+  batteryLevel Int @default(100)
+  signalStrength Int @default(100)
+  carId String? @db.Text @unique
+  car Car ? @relation(fields : [carId],references: [id])
+  @@index([carId])
+}
+
+model Company{
+  id String @id @default(uuid())
+  userId String @db.Text
+  name String @db.Text
+  description String? @db.Text
+  profileImage String @db.Text
+  cif String @db.Text
+  phone String @db.Text
+  country String @db.Text
+  website String @db.Text
+
+  contacts Contact[]
+
+  events Event[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Contact{
+  id String @id @default(uuid())
+  companyId String? @db.Text
+
+  name String @db.Text
+  role String @db.Text
+  email String @db.Text
+  phone String @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  company Company ? @relation( fields: [companyId] , references: [id], onDelete: Cascade)
+ @@index([companyId])
+}
+
+
+model Event{
+  id String @id @default(uuid())
+  userId String @db.Text
+  companyId String @db.Text
+  title String 
+  start DateTime
+  allDay Boolean
+  timeFormat String
+
+  company Company? @relation(fields: [companyId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([ companyId])
+}
