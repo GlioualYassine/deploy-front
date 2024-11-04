@@ -12,7 +12,7 @@ const axiosInstance = axios.create({
 */
 
 const axiosInstance = axios.create({
-  baseURL: "http://ec2-43-204-112-241.ap-south-1.compute.amazonaws.com:8080/api/v1/", // Your backend base URL
+  baseURL: "https://ec2-43-204-112-241.ap-south-1.compute.amazonaws.com:8080/api/v1/", // Your backend base URL
   headers: {
     "Content-Type": "application/json",
   },
