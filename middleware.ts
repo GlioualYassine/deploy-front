@@ -18,3 +18,11 @@ export const config = {
     "/((?!.+.[w]+$|_next).*)","/","/(api|trpc)(.*)"
   ],
 };*/
+
+
+import { NextResponse } from 'next/server';
+
+export default function middleware(req:any) {
+  // Middleware logic
+  return NextResponse.next();
+}
