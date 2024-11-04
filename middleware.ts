@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+/*import { NextResponse } from 'next/server';
 
 export default function middleware() {
   // const token = null;
@@ -17,4 +17,4 @@ export const config = {
   matcher: [
     "/((?!.+.[w]+$|_next).*)","/","/(api|trpc)(.*)"
   ],
-};
+};*/
