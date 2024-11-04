@@ -60,7 +60,7 @@ const ActionsCell: React.FC<CellContext<Transaction, unknown>> = ({ row }) => {
         <DropdownMenuItem
           onClick={() => navigator.clipboard.writeText(transaction.id)}
         >
-          Copier l&apos;ID de la transaction
+          Copier l&apos;ID de la transaction 
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
