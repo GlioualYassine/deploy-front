@@ -15,7 +15,8 @@ const Page = () => {
   useEffect(() => {
     if (User && User.token) {
       if (!socketClientRef.current) {
-        const ws = new SockJS("http://localhost:8080/ws");
+        const ws = new SockJS("https://18.209.226.16/ws");  //        const ws = new SockJS("http://localhost:8080/ws");
+
         const stompClient = Stomp.over(ws);
         stompClient.connect(
           { Authorization: "Bearer " + User.token, userId: User.id },

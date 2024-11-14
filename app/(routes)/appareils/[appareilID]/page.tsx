@@ -6,6 +6,7 @@ import { Appareil } from "@/app/(routes)/appareils/[appareilID]/components/Appar
 import axios from "axios";
 import { Skeleton } from "@/components/ui/skeleton"; // Assure-toi que ce composant existe
 import FooterAutomobile from "./components/FooterAppareil/FooterAutomobile";
+import axiosInstance from "@/lib/axiosInstance";
 
 const AutomobileIdPage = ({ params }: { params: { appareilID: string } }) => {
   const [appareil, setAppareil] = useState<Appareil | null>(null);
@@ -13,9 +14,7 @@ const AutomobileIdPage = ({ params }: { params: { appareilID: string } }) => {
   useEffect(() => {
     const fetchGPS = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8080/api/v1/gpsDevices/${params.appareilID}`
-        );
+        const response = await axiosInstance.get(`/gpsDevices/${params.appareilID}`);
         setAppareil(response.data);
         //console.log(response.data);
       } catch (error) {

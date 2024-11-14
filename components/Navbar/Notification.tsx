@@ -69,7 +69,7 @@ const Notification = ({
     if (userFromLocalStorage && token) {
       if (!socketClientRef.current) {
         // S'assurer que le client WebSocket est initialisé une seule fois
-        const ws = new SockJS("http://localhost:8080/ws");
+        const ws = new SockJS("https://18.209.226.16/ws");
         const stompClient = Stomp.over(ws);
         stompClient.connect(
           { Authorization: "Bearer " + token, userId: userFromLocalStorage.id },
