@@ -1,34 +1,18 @@
-// lib/axiosInstance.js
 import axios from "axios";
+import https from "https";
 
 // Create the axios instance
-
 const axiosInstance = axios.create({
   baseURL: "https://18.209.226.16/api/v1/", // Your backend base URL
   headers: {
     "Content-Type": "application/json",
   },
+  // Disable SSL certificate validation for development purposes only
+  httpsAgent: new https.Agent({
+    rejectUnauthorized: false, // **Ignore SSL Certificate for self-signed certificates**
+  }),
 });
 
-/*
-const axiosInstance = axios.create({
-  baseURL: "http://localhost:8080/api/v1/", // Your backend base URL
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
-*/
-
-/*
-const axiosInstance = axios.create({
-  baseURL: "http://ec2-43-204-112-241.ap-south-1.compute.amazonaws.com:8080/api/v1/", // Your backend base URL
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
-*/
 // Add a request interceptor to attach the token to every request (except login)
 axiosInstance.interceptors.request.use(
   (config) => {
@@ -51,6 +35,5 @@ axiosInstance.interceptors.request.use(
     return Promise.reject(error);
   }
 );
-
 
 export default axiosInstance;
