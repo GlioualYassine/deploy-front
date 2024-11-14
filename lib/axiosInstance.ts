@@ -2,6 +2,14 @@
 import axios from "axios";
 
 // Create the axios instance
+
+const axiosInstance = axios.create({
+  baseURL: "https://18.209.226.16/api/v1/", // Your backend base URL
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
 /*
 const axiosInstance = axios.create({
   baseURL: "http://localhost:8080/api/v1/", // Your backend base URL
@@ -9,15 +17,18 @@ const axiosInstance = axios.create({
     "Content-Type": "application/json",
   },
 });
+
 */
 
+/*
 const axiosInstance = axios.create({
-  baseURL: "https://ec2-43-204-112-241.ap-south-1.compute.amazonaws.com:8080/api/v1/", // Your backend base URL
+  baseURL: "http://ec2-43-204-112-241.ap-south-1.compute.amazonaws.com:8080/api/v1/", // Your backend base URL
   headers: {
     "Content-Type": "application/json",
   },
 });
 
+*/
 // Add a request interceptor to attach the token to every request (except login)
 axiosInstance.interceptors.request.use(
   (config) => {
