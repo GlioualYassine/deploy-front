@@ -3,14 +3,10 @@ import https from "https";
 
 // Create the axios instance
 const axiosInstance = axios.create({
-  baseURL: "https://18.209.226.16/api/v1/", // Your backend base URL
+  baseURL: "https://api.ramycan.com/api/v1/", // Your backend base URL
   headers: {
     "Content-Type": "application/json",
   },
-  // Disable SSL certificate validation for development purposes only
-  httpsAgent: new https.Agent({
-    rejectUnauthorized: false, // **Ignore SSL Certificate for self-signed certificates**
-  }),
 });
 
 // Add a request interceptor to attach the token to every request (except login)
