@@ -18,16 +18,15 @@ import {
 //import { GrGroup } from "react-icons/gr";
 import { CircleDollarSign } from 'lucide-react';
 
-
 export const dataGeneralSidebar = [
     {
         icon : PanelsTopLeft ,
-        label : "Dashboard",
+        label : "Tableau de bord",
         href : "/",
     },
     {
         icon : Building2 ,
-        label : "Companies",
+        label : "Entreprises",
         href : "/companies",
     },
     {
@@ -50,12 +49,12 @@ export const dataGeneralSidebar = [
 export const dataToolsSidebar = [
     {
         icon : Fuel  ,
-        label : "Fuel",
+        label : "Carburant",
         href : "/fuel",
     },
     {
         icon : MapPinned  ,
-        label : "Tracking",
+        label : "Suivi",
         href : "/tracking",
     },
     {
@@ -78,13 +77,12 @@ export const dataToolsSidebar = [
 export const dataSupportSidebar = [
     {
         icon : Settings ,
-        label : "Setting",
+        label : "Paramètres",
         href : "/setting",
     },
     {
         icon : ShieldCheck ,
-        label : "Security",
+        label : "Sécurité",
         href : "/security",
     }
-    
 ]

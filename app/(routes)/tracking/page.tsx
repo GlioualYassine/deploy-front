@@ -15,7 +15,10 @@ const Page = () => {
   const socketClientRef = useRef<any>(null);
 
   useEffect(() => {
+<<<<<<< HEAD
     // Déconnecter et reconnecter à chaque changement de User ou token
+=======
+>>>>>>> dce5baf268c48989ccb86dc3f6080b4ecfee48f1
     
 
     const ws = new SockJS(url);
@@ -57,6 +60,7 @@ const Page = () => {
     <div>
       {currentPosition ? (
         <GoogleMaps
+          path={[currentPosition]}
           latitude={currentPosition.lat}
           longitude={currentPosition.lng}
         />
