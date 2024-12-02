@@ -3,7 +3,7 @@ import https from "https";
 
 // Create the axios instance
 const axiosInstance = axios.create({
-  baseURL: "https://api.ramycan.com/api/v1/", // Your backend base URL
+  baseURL: "https://api.ramycan.com/api/v1/", // Your backend base URL  https://api.ramycan.com/api/v1/
   headers: {
     "Content-Type": "application/json",
   },

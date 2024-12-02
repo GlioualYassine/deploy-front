@@ -2,34 +2,44 @@
 import { toast } from "@/components/ui/use-toast";
 import { login } from "@/app/store/authSlice";
 import axiosInstance from "@/lib/axiosInstance";
-
+import Cookies from "js-cookie";
 // lib/auth.js
 export const loginAuth = async (credentials, dispatch, router) => {
-  toast({
-    variant: "destructive",
-    title: "Logging in",
-    description: "Please wait...",
-  });
-
   console.log(credentials);
 
   await axiosInstance
     .post("auth/login", credentials)
     .then((response) => {
+      toast({
+        variant: "success",
+        title: "Login Success",
+        description: "Please wait...",
+      });
       const { token, user } = response.data;
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
+
+      Cookies.set("authTokens", token, { expires: 1, path: "/" }); // Cookie expiration in days
+      Cookies.set("user", JSON.stringify(user), { expires: 1, path: "/" });
+
       dispatch(login({ user }));
       //window.location.href = "/";
       router.push("/");
     })
     .catch((error) => {
       console.log(error);
+      toast({
+        variant: "destructive",
+        title: "Error de conexión",
+        description: "Please wait...",
+      });
     });
 };
 
 export const logout = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("user");
-  
+
+  Cookies.remove("authTokens");
+  Cookies.remove("user");
 };
