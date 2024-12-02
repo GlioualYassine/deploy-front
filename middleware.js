@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { NextResponse, NextRequest } from 'next/server';
+import axiosInstance from './lib/axiosInstance';
 
 export default async function middleware(req) {
   const authTokens = req.cookies.get('authTokens');
@@ -18,13 +19,21 @@ export default async function middleware(req) {
 
 export const config = {
   matcher: [
-    "/","/utilisateurs"
+    "/", // Page d'accueil
+    "/utilisateurs/:path*", // Page utilisateurs
+    "/appareils/:path*", // Sous-routes des appareils
+    "/automobiles/:path*", // Sous-routes des automobiles
+    "/companies/:path*", // Sous-routes des entreprises
+    "/notifications/:path*", // Notifications
+    "/paiement/:path*", // Paiement
+    "/tracking/:path*", // Tracking (sous-dossier components/Map inclus)
   ],
 };
 
+
 const checkAuth = async (token) => {
   try {
-    const res = await axios.get('http://localhost:8080/api/v1/auth/check-auth', {
+    const res = await axiosInstance.get('auth/check-auth', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
