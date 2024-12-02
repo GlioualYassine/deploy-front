@@ -4,38 +4,45 @@ import GoogleMaps from "./components/Map/GoogleMap";
 import SockJS from "sockjs-client";
 import * as Stomp from "stompjs";
 
+let url: string = "https://api.ramycan.com/ws";
+
 const Page = () => {
-  const [path, setPath] = useState<{ lat: number; lng: number }[]>([]);
+  const [currentPosition, setCurrentPosition] = useState<{ lat: number; lng: number } | null>(null);
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") || "" : null;
   const User =
-    typeof window !== "undefined"
-      ? JSON.parse(localStorage.getItem("user") || "{}")
-      : null;
-  const socketClientRef = useRef<any>(null); // Utiliser un ref pour stocker le client WebSocket
+    typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user") || "{}") : null;
+  const socketClientRef = useRef<any>(null);
 
   useEffect(() => {
-    if (User && User.token) {
-      if (!socketClientRef.current) {
-        const ws = new SockJS("https://18.209.226.16/ws");  //        const ws = new SockJS("http://localhost:8080/ws");
+    
 
-        const stompClient = Stomp.over(ws);
-        stompClient.connect(
-          { Authorization: "Bearer " + User.token, userId: User.id },
-          () => {
-            console.log("Connected to WebSocket with user:", User);
-            stompClient.subscribe(`/user/${User.id}/positions`, (message) => {
-              const position = JSON.parse(message.body);
-              if (position) {
-                setPath((prevPath) => [...prevPath, position]);
-              }
-            });
-          },
-          (error) => {
-            console.error("Connection error:", error);
+    const ws = new SockJS(url);
+    const stompClient = Stomp.over(ws);
+    stompClient.connect(
+      { Authorization: "Bearer " + token, userId: User.id },
+      () => {
+        console.log("Connected to WebSocket with user:", User);
+        stompClient.subscribe(`/user/${User.id}/positions`, (message) => {
+          const position = JSON.parse(message.body);
+          console.log("Message received:", position); // Log chaque message reçu
+          const lat = parseFloat(position.latitude);
+          const lng = parseFloat(position.longitude);
+          
+          if (isFinite(lat) && isFinite(lng)) {
+            setCurrentPosition({ lat, lng });
+            console.log("Position updated to:", { lat, lng }); // Log la mise à jour de position
+          } else {
+            console.warn("Invalid latitude or longitude received:", position);
           }
-        );
-        socketClientRef.current = stompClient;
+        });
+      },
+      (error) => {
+        console.error("Connection error:", error);
       }
-    }
+    );
+
+    socketClientRef.current = stompClient;
 
     return () => {
       if (socketClientRef.current && socketClientRef.current.connected) {
@@ -43,15 +50,19 @@ const Page = () => {
         console.log("Disconnected from WebSocket");
       }
     };
-  }, [User]); // Ajouter `User` comme dépendance pour le hook
+  }, [token, User]); // Réinitialiser la connexion WebSocket si token ou User change
 
   return (
     <div>
-      <GoogleMaps
-        path={path}
-        latitude={35.7673} // Centre de la carte sur le premier point
-        longitude={-5.7998}
-      />
+      {currentPosition ? (
+        <GoogleMaps
+          path={[currentPosition]}
+          latitude={currentPosition.lat}
+          longitude={currentPosition.lng}
+        />
+      ) : (
+        <div>Loading map...</div>
+      )}
     </div>
   );
 };
