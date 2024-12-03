@@ -31,6 +31,12 @@ const ListDevices = () => {
     };
 
     fetchVoitures();
+
+    // Set interval to fetch every minute
+    const interval = setInterval(fetchVoitures, 60000);
+
+    // Clear interval on component unmount
+    return () => clearInterval(interval);
   }, [dispatch]); // Le tableau de dépendances vide [] signifie que ce useEffect est appelé une seule fois au montage du composant
   return <DataTable columns={columns} data={devices} />;
 };

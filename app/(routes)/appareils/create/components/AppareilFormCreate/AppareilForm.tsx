@@ -78,7 +78,7 @@ interface Driver {
 }
 
 const AppareilForm = () => {
-  const [isNewDriver, setIsNewDriver] = useState(false); // État pour le statut de nouveau conducteur
+  const [isNewDriver, setIsNewDriver] = useState(true); // État pour le statut de nouveau conducteur
   const dispatch = useAppDispatch();
   const [dateInsuranceExpiryDate, setDateInsuranceExpiryDate] =
     React.useState<Date>();
