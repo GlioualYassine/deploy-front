@@ -1,3 +1,4 @@
+"use client"
 import React, { useCallback } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut } from "lucide-react";
@@ -23,6 +24,10 @@ const Profile = () => {
     router.push("/sign-in");
   }, [router]);
 
+  const handleProfileClick = useCallback(() => {
+    router.push("/profile");
+  }, [router]);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -34,10 +39,7 @@ const Profile = () => {
       <DropdownMenuContent className="w-56 mr-3 mt-3">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Profile</DropdownMenuItem>
-        <DropdownMenuItem>Billing</DropdownMenuItem>
-        <DropdownMenuItem>Team</DropdownMenuItem>
-        <DropdownMenuItem>Subscription</DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer" onClick={handleProfileClick}>Mon Profile</DropdownMenuItem>        
         <DropdownMenuSeparator />
         <DropdownMenuItem className="cursor-pointer flex items-center" onClick={handleLogout}>
           <LogOut strokeWidth={1} className="mr-2" />

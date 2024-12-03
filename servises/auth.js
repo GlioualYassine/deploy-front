@@ -10,11 +10,6 @@ export const loginAuth = async (credentials, dispatch, router) => {
   await axiosInstance
     .post("auth/login", credentials)
     .then((response) => {
-      toast({
-        variant: "success",
-        title: "Login Success",
-        description: "Please wait...",
-      });
       const { token, user } = response.data;
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
