@@ -40,14 +40,14 @@ import { deleteDevice } from "@/app/store/deviceSlise";
 import { Eye } from "lucide-react"; // Assurez-vous que les icônes sont importées correctement
 
 // Composant pour les actions (supprimer, éditer, notifications, et historique des positions)
-const ActionCell = ({ id }: { id: string }) => {
+const ActionCell = ({ divice }: { divice: Device }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useAppDispatch();
   const onCloseDialog = () => setIsOpen(false);
 
   const onDeleteDevice = async () => {
     try {
-      const response = await axiosInstance.delete("gpsDevices/" + id);
+      const response = await axiosInstance.delete("gpsDevices/" + divice.id);
       toast({ title: "Device deleted successfully." });
 
       dispatch(deleteDevice(response.data.id));
@@ -62,7 +62,7 @@ const ActionCell = ({ id }: { id: string }) => {
   return (
     <div className="flex gap-3 justify-center items-center">
       {/* Bouton pour éditer */}
-      <Link href={`appareils/${id}`}>
+      <Link href={`appareils/${divice.id}`}>
         <Button className="flex gap-1 justify-center items-center dark:bg-slate-700 text-white bg-sky-950">
           <Pencil className="w-4 h-4 mr-2" />
           <p>Editer</p>
@@ -95,7 +95,7 @@ const ActionCell = ({ id }: { id: string }) => {
         </DialogContent>
       </Dialog>
       {/* Nouveau bouton pour l'historique des positions */}
-      <Link href={`appareils/positions/${id}`}>
+      <Link href={`appareils/positions/${divice.imei}`}>
       <Button className="flex gap-1 justify-center items-center dark:bg-[#4b5563] text-white bg-[#16a34a]">
           <Eye className="w-4 h-4 mr-2" />
           <p>Positions</p>
@@ -103,7 +103,7 @@ const ActionCell = ({ id }: { id: string }) => {
       </Link>
 
       {/* Bouton pour afficher les notifications */}
-      <Link href={`appareils/notifications/${id}`}>
+      <Link href={`appareils/notifications/${divice.id}`}>
         <Button className="flex gap-1 justify-center items-center dark:bg-[#84385f] text-white bg-[#60a5fa]">
           <BellDot className="w-4 h-4 mr-2" />
           <p>Notifications</p>
@@ -285,6 +285,6 @@ export const columns: ColumnDef<Device>[] = [
   {
     accessorKey: "actions",
     header: "Actions",
-    cell: ({ row }) => <ActionCell id={row.original.id.toString()} />,
+    cell: ({ row }) => <ActionCell divice={row.original} />,
   },
 ];

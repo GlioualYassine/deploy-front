@@ -7,10 +7,11 @@ const MapsApp = dynamic(() => import("./Components/MapsApp"), {
   ssr: false,
 });
 
-export default function Home() {
+export default function Home({ params }: { params: {deviceID: string } }) {
   return (
     <main className=" w-full h-[84.5vh]">
-      <MapsApp />
+      
+      <MapsApp imei={params.deviceID} />
     </main>
   );
 }
