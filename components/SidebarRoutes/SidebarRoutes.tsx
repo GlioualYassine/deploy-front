@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 
 const SidebarRoutes = () => {
   return (
-    <div className="flex flex-col justify-between h-full">
+    <div className="flex flex-col mt-2 justify-between h-full">
         <div>
           <div className="p-2 md:p-6">
             <p className="text-slate-500 mb-2">GENERAL</p>

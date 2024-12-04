@@ -7,6 +7,7 @@ import { ModeToggle } from "../ToggleTheme";
 import Profile from "./Profile";
 import { useEffect, useState } from "react";
 import Notification from "./Notification";
+import Logo from '../Logo/Logo'
 
 const Navbar = () => {
   const [userFromLocalStorage, setUserFromLocalStorage] = useState<any>(null);
@@ -25,12 +26,13 @@ const Navbar = () => {
 
   return (
     <div className="flex items-center px-2 gap-4 md:px-6 justify-between w-full bg-background border-b h-20">
-      <div className="block xl:hidden">
+      <div className="block hidden ">
         <Sheet>
           <SheetTrigger className="flex items-center">
             <Menu />
           </SheetTrigger>
           <SheetContent side="left">
+            <Logo />
             <SidebarRoutes />
           </SheetContent>
         </Sheet>
