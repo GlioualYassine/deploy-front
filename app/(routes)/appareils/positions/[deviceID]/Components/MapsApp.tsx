@@ -11,6 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Card } from "@/components/ui/card";
 import axiosInstance from "@/lib/axiosInstance";
+import { format } from "date-fns";
 
 const tags = Array.from({ length: 50 }).map(
   (_, i, a) => `v1.2.0-beta.${a.length - i}`
@@ -28,6 +29,7 @@ export interface Historique {
   imei: string;
   latitude: string;
   longitude: string;
+  timestamp : any
 }
 
 const defaultPosition: [number, number] = [
@@ -76,20 +78,19 @@ function MapsApp({ imei }: { imei: string }) {
       setActiveEvent(event);
     }
   };
- /// FETCHIN DATA
- useEffect(() => {
-  // Appeler fitchData une fois dès le chargement du composant
-  fitchData();
-
-  // Répéter l'appel toutes les 10 secondes (10000 ms)
-  const intervalId = setInterval(() => {
+  /// FETCHIN DATA
+  useEffect(() => {
+    // Appeler fitchData une fois dès le chargement du composant
     fitchData();
-  }, 10000);
 
-  // Nettoyer l'intervalle à la destruction du composant pour éviter les fuites de mémoire
-  return () => clearInterval(intervalId);
-}, []);
+    // Répéter l'appel toutes les 10 secondes (10000 ms)
+    const intervalId = setInterval(() => {
+      fitchData();
+    }, 10000);
 
+    // Nettoyer l'intervalle à la destruction du composant pour éviter les fuites de mémoire
+    return () => clearInterval(intervalId);
+  }, []);
 
   const fitchData = async () => {
     try {
@@ -104,22 +105,29 @@ function MapsApp({ imei }: { imei: string }) {
 
   return (
     <div className="flex flex-col md:flex-row gap-2  w-full h-full">
-      <ScrollArea className="h-[80vh]  w-72  border">
+      <ScrollArea className="h-[80vh] w-72 border rounded-lg overflow-hidden shadow-md">
         <div className="p-4">
-          <h4 className="mb-4 text-sm font-medium leading-none">
+          <h4 className="mb-4 text-sm font-medium text-gray-600 leading-none">
             Les Historiques
           </h4>
-          {historyEvents.map((tag:any) => (
-            <>
-              <Card className="p-2 mb-2" onClick={() => handleListItemClick(tag.id)}>
-                <div key={tag.id} className="text-sm ">
+          {historyEvents.map((tag: any) => (
+            <Card
+              key={tag.id}
+              className="p-4 mb-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+              onClick={() => handleListItemClick(tag.id)}
+            >
+              <div className="flex flex-col space-y-2">
+                <div className="text-sm text-gray-700 font-semibold">
                   {tag.imei}
                 </div>
-                <div key={tag.id} className="text-sm ">
-                  {tag.timestamp}
+                <div className="text-xs text-gray-500">
+                  {/* Formater la date pour qu'elle soit plus lisible */}
+                  {tag.timestamp
+                    ? format(new Date(tag.timestamp), "dd MMM yyyy, HH:mm:ss")
+                    : "Date non disponible"}
                 </div>
-              </Card>
-            </>
+              </div>
+            </Card>
           ))}
         </div>
       </ScrollArea>
@@ -135,13 +143,15 @@ function MapsApp({ imei }: { imei: string }) {
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           {historyEvents
             .filter(
-              (event) =>
-                !selectedCategory || event.imei === selectedCategory
+              (event) => !selectedCategory || event.imei === selectedCategory
             )
             .map((event) => (
               <Marker
                 key={event.id}
-                position={[parseFloat(event.latitude), parseFloat(event.longitude)]}
+                position={[
+                  parseFloat(event.latitude),
+                  parseFloat(event.longitude),
+                ]}
                 icon={icon}
                 eventHandlers={{
                   click: () => {
@@ -151,33 +161,34 @@ function MapsApp({ imei }: { imei: string }) {
               />
             ))}
           {activeEvent && (
-            <Popup position={[parseFloat(activeEvent.latitude), parseFloat(activeEvent.longitude)]} closeOnClick={false}>
-              <div className="p-4 bg-white rounded-lg shadow-xl">
-                <h2 className="font-bold text-xl text-blue-600 mb-3">
-                  {activeEvent.imei}
-                </h2>
-                <p className="text-gray-700 mb-4">
-                  {/* {new Date(activeEvent.).toLocaleString()} */}
-                </p>
-                <button
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
-                    favourites.includes(activeEvent.id)
-                      ? "bg-yellow-500 hover:bg-yellow-400 text-white"
-                      : "bg-gray-200 hover:bg-gray-300 text-gray-600"
-                  }`}
-                  onClick={() => handleFavouriteClick(activeEvent.id)}
-                >
-                  {favourites.includes(activeEvent.id) ? (
-                    <span>{fullStar} Unfavourite</span>
-                  ) : (
-                    <span>{emptyStar} Favourite</span>
-                  )}
-                </button>
-              </div>
-            </Popup>
+            <Popup
+            position={[
+              parseFloat(activeEvent.latitude),
+              parseFloat(activeEvent.longitude),
+            ]}
+            closeOnClick={false}
+          >
+            <div className="p-4 bg-white rounded-lg shadow-xl max-w-xs w-full">
+              {/* Titre avec un style soigné */}
+              <h2 className="font-bold text-xl text-blue-600 mb-3 truncate">
+                {activeEvent.imei}
+              </h2>
+              {/* Affichage de la date de manière lisible */}
+              <p className="text-gray-700 text-sm mb-4">
+                {/* Formater la date pour la rendre lisible */}
+                {activeEvent.timestamp
+                  ? format(new Date(activeEvent.timestamp), 'dd MMM yyyy, HH:mm:ss')
+                  : 'Date non disponible'}
+              </p>
+            
+            </div>
+          </Popup>
           )}
           {activeEvent && (
-            <FlyToMarker position={[activeEvent.latitude, activeEvent.longitude]} zoomLevel={15} />
+            <FlyToMarker
+              position={[activeEvent.latitude, activeEvent.longitude]}
+              zoomLevel={15}
+            />
           )}
         </MapContainer>
       </div>
