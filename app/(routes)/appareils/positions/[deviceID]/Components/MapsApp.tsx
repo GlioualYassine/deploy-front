@@ -76,10 +76,21 @@ function MapsApp({ imei }: { imei: string }) {
       setActiveEvent(event);
     }
   };
+ /// FETCHIN DATA
+ useEffect(() => {
+  // Appeler fitchData une fois dès le chargement du composant
+  fitchData();
 
-  useEffect(() => {
+  // Répéter l'appel toutes les 10 secondes (10000 ms)
+  const intervalId = setInterval(() => {
     fitchData();
-  }, []);
+  }, 10000);
+
+  // Nettoyer l'intervalle à la destruction du composant pour éviter les fuites de mémoire
+  return () => clearInterval(intervalId);
+}, []);
+
+
   const fitchData = async () => {
     try {
       const response = await axiosInstance.get(`positions/${imei}`);
@@ -98,11 +109,14 @@ function MapsApp({ imei }: { imei: string }) {
           <h4 className="mb-4 text-sm font-medium leading-none">
             Les Historiques
           </h4>
-          {historyEvents.map((tag) => (
+          {historyEvents.map((tag:any) => (
             <>
               <Card className="p-2 mb-2" onClick={() => handleListItemClick(tag.id)}>
                 <div key={tag.id} className="text-sm ">
                   {tag.imei}
+                </div>
+                <div key={tag.id} className="text-sm ">
+                  {tag.timestamp}
                 </div>
               </Card>
             </>
