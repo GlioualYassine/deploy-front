@@ -21,7 +21,7 @@ import { motion } from "framer-motion";
 import axiosInstance from "@/lib/axiosInstance";
 import { useAppDispatch } from "@/app/store/hooks";
 import { addCompany, setCompanies } from "@/app/store/companySlice";
-import { Company } from "../components/list/ListCompanies.types";
+import { Company } from "../components/companie.types";
 const CompanyForm = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();

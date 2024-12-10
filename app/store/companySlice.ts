@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Company } from "../(routes)/companies/components/list/ListCompanies.types";
+import { Company } from "../(routes)/companies/components/companie.types";
 
 interface CompanyState {
   companies: Company[];
@@ -20,7 +20,9 @@ const CompanySlice = createSlice({
       state.companies.push(action.payload);
     },
     modifyCompany(state, action: PayloadAction<Company>) {
-      const index = state.companies.findIndex((c) => c.id === action.payload.id);
+      const index = state.companies.findIndex(
+        (c) => c.id === action.payload.id
+      );
       if (index !== -1) {
         // Create a new array with the updated company in its original position
         state.companies = [
@@ -29,19 +31,19 @@ const CompanySlice = createSlice({
           ...state.companies.slice(index + 1),
         ];
       }
-    }    
-    ,
+    },
     deleteCompany(state, action: PayloadAction<number>) {
       console.log("--------------------");
-      
+
       console.log(action.payload);
-      
+
       state.companies = state.companies.filter(
         (device) => device.id !== action.payload
       );
+    },
   },
-}
 });
 
-export const { setCompanies, addCompany , modifyCompany,deleteCompany } = CompanySlice.actions;
+export const { setCompanies, addCompany, modifyCompany, deleteCompany } =
+  CompanySlice.actions;
 export default CompanySlice.reducer;

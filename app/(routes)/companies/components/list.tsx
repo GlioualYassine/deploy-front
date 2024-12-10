@@ -3,7 +3,7 @@ import { DataTable } from "./data-table";
 import { columns } from   "./columns";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Company } from "./list/ListCompanies.types";
+import { Company } from "./companie.types";
 import { useAppSelector } from "@/app/store/hooks";
 import { setCompanies } from "@/app/store/companySlice";
 import { useFetch } from "@/servises/useFetch";

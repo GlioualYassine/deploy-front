@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/card";
 import { formSchema } from "../../create/Companyform.form";
 import {  ChevronLeft } from "lucide-react";
-import { Company } from "../../components/list/ListCompanies.types";
+import { Company } from "../../components/companie.types";
 import { CompanyFormProps } from "./Companyform.types";
 
 const CompanyForm = (props: CompanyFormProps) => {

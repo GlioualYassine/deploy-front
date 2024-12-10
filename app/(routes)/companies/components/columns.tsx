@@ -9,7 +9,7 @@ import { deleteCompany } from "@/app/store/companySlice";
 
 import { useToast } from "@/components/ui/use-toast";
 import Link from "next/link";
-import { Company } from "./list/ListCompanies.types";
+import { Company } from "./companie.types";
 import axiosInstance from "@/lib/axiosInstance";
 
 import { useDispatch } from "react-redux";
