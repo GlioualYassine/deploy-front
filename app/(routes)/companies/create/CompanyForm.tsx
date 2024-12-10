@@ -21,7 +21,7 @@ import { motion } from "framer-motion";
 import axiosInstance from "@/lib/axiosInstance";
 import { useAppDispatch } from "@/app/store/hooks";
 import { addCompany, setCompanies } from "@/app/store/companySlice";
-import { Company } from "../components/ListCompanies/ListCompanies.types";
+import { Company } from "../components/list/ListCompanies.types";
 const CompanyForm = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -52,70 +52,68 @@ const CompanyForm = () => {
       toast({ title: "Entreprise créée avec succès !" });
       router.push("/companies");
     } catch (error) {
-      toast({ title: "Erreur lors de la création", description: "Réessayez plus tard" });
+      toast({
+        title: "Erreur lors de la création",
+        description: "Réessayez plus tard",
+      });
     }
   };
 
   return (
     <Form {...form}>
-      <motion.form 
-        onSubmit={form.handleSubmit(onSubmit)} 
+      <motion.form
+        onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-8 p-8 bg-white shadow-xl rounded-lg w-[70%] mx-auto"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <motion.h2 
-          className="text-3xl font-semibold text-gray-800 text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-        >
+        <h2 className="text-2xl font-semibold text-gray-800">
           Créer une entreprise
-        </motion.h2>
-        
-        <div className="space-y-6">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-gray-700 font-medium">Nom de l’entreprise</FormLabel>
-                <FormControl>
-                  <Input placeholder="X Sarl" className="transition-colors focus:border-blue-500" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          
-          <FormField
-            control={form.control}
-            name="adress"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-gray-700 font-medium">Adresse</FormLabel>
-                <FormControl>
-                  <Textarea placeholder="123 rue Exemple, Ville" className="transition-colors focus:border-blue-500" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        </h2>
 
-          <FormField
-            control={form.control}
-            name="phone"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-gray-700 font-medium">Téléphone</FormLabel>
-                <FormControl>
-                  <Input placeholder="+212 6555555" className="transition-colors focus:border-blue-500" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 gap-6">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-700 font-medium">
+                    Nom de l’entreprise
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Nom de l’entreprise"
+                      className="transition-colors focus:border-blue-500"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="adress"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-700 font-medium">
+                    Adresse
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Adresse de l’entreprise"
+                      className="transition-colors focus:border-blue-500"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
           <div className="grid grid-cols-2 gap-6">
             <FormField
@@ -123,9 +121,15 @@ const CompanyForm = () => {
               name="admin_first_name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700 font-medium">Prénom de l’Admin</FormLabel>
+                  <FormLabel className="text-gray-700 font-medium">
+                    Prénom de l’Admin
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="Prénom" className="transition-colors focus:border-blue-500" {...field} />
+                    <Input
+                      placeholder="Prénom"
+                      className="transition-colors focus:border-blue-500"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -137,9 +141,15 @@ const CompanyForm = () => {
               name="admin_last_name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700 font-medium">Nom de l’Admin</FormLabel>
+                  <FormLabel className="text-gray-700 font-medium">
+                    Nom de l’Admin
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="Nom" className="transition-colors focus:border-blue-500" {...field} />
+                    <Input
+                      placeholder="Nom"
+                      className="transition-colors focus:border-blue-500"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -147,26 +157,54 @@ const CompanyForm = () => {
             />
           </div>
 
-          <FormField
-            control={form.control}
-            name="admin_email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-gray-700 font-medium">Email de l’Admin</FormLabel>
-                <FormControl>
-                  <Input placeholder="admin@example.com" type="email" className="transition-colors focus:border-blue-500" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="grid grid-cols-2 gap-6">
+            <FormField
+              control={form.control}
+              name="admin_email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-700 font-medium">
+                    Email de l’Admin
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="admin@example.com"
+                      type="email"
+                      className="transition-colors focus:border-blue-500"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-700 font-medium">
+                    Téléphone
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="+212 6555555"
+                      className="transition-colors focus:border-blue-500"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
 
         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-          <Button 
-            type="submit" 
-            className="w-full mt-8 bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition-colors"
+          <Button
+            type="submit"
+            className="w-full mt-8  text-white font-semibold py-3 rounded-lg transition-colors"
           >
             Créer l&#39;entreprise
           </Button>

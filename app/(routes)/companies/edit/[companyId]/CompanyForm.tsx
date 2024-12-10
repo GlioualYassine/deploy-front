@@ -3,7 +3,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,8 +16,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import axiosInstance from "@/lib/axiosInstance";
 import { useAppDispatch } from "@/app/store/hooks";
-import { addCompany, modifyCompany } from "@/app/store/companySlice";
-import { Company } from "../../../../components/ListCompanies/ListCompanies.types";
+import { modifyCompany } from "@/app/store/companySlice";
 import {
   Card,
   CardContent,
@@ -26,10 +24,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { formSchema } from "../../../../create/Companyform.form";
+import { formSchema } from "../../create/Companyform.form";
+import {  ChevronLeft } from "lucide-react";
+import { Company } from "../../components/list/ListCompanies.types";
 import { CompanyFormProps } from "./Companyform.types";
-import { ArrowLeft } from "lucide-react";
-import FooterCompany from "../FooterCompany/FooterCompany";
 
 const CompanyForm = (props: CompanyFormProps) => {
   const router = useRouter();
@@ -92,66 +90,48 @@ const CompanyForm = (props: CompanyFormProps) => {
     <Card className="w-[100%]  shadow-lg">
       <CardHeader>
         <CardTitle className="text-2xl font-bold flex items-center justify-between">
-          <div
-            className="flex items-center font-semibold text-lg"
-            style={{ fontFamily: "Inter, Arial, sans-serif" }}
-          >
-            <ArrowLeft
+          <div className="flex items-center font-semibold text-lg">
+            <ChevronLeft
               className="mr-2 w-5 h-5 cursor-pointer hover:text-gray-700 transition ease-in-out duration-150"
               onClick={() => router.push("/companies")}
               strokeWidth={5}
             />
             <div>Editer entreprise</div>
           </div>
-          <div>
-            <FooterCompany companyId={company.id} />
-          </div>
         </CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nom de l’entreprise</FormLabel>
-                  <FormControl>
-                    <Input placeholder="X Sarl" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-2 gap-6">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nom de l’entreprise</FormLabel>
+                    <FormControl>
+                      <Input placeholder="X Sarl" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="adress"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Adresse</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="123 rue Exemple, Ville" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Téléphone</FormLabel>
-                  <FormControl>
-                    <Input placeholder="+212 6555555" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="adress"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Adresse</FormLabel>
+                    <FormControl>
+                      <Input placeholder="123 rue Exemple, Ville" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <div className="grid grid-cols-2 gap-4">
               <FormField
@@ -183,23 +163,39 @@ const CompanyForm = (props: CompanyFormProps) => {
               />
             </div>
 
-            <FormField
-              control={form.control}
-              name="admin_email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email de l’Admin</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="admin@example.com"
-                      type="email"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-2 gap-6">
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Téléphone</FormLabel>
+                    <FormControl>
+                      <Input placeholder="+212 6555555" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="admin_email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email de l’Admin</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="admin@example.com"
+                        type="email"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </form>
         </Form>
       </CardContent>

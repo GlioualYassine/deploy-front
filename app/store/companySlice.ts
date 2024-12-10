@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Company } from "../(routes)/companies/components/ListCompanies/ListCompanies.types";
+import { Company } from "../(routes)/companies/components/list/ListCompanies.types";
 
 interface CompanyState {
   companies: Company[];
@@ -32,6 +32,10 @@ const CompanySlice = createSlice({
     }    
     ,
     deleteCompany(state, action: PayloadAction<number>) {
+      console.log("--------------------");
+      
+      console.log(action.payload);
+      
       state.companies = state.companies.filter(
         (device) => device.id !== action.payload
       );
