@@ -93,18 +93,18 @@ export const columns: ColumnDef<Company>[] = [
       };
 
       return (
-        <div className="flex items-center gap-2 justify-end">
+        <div className="flex items-center justify-center">
           <Link href={`/companies/edit/${id}`}>
-            <Button className="bg-emerald-500">
-              <Edit className="h-1 w-1" />
+            <Button className="bg-transparent hover:bg-transparent">
+              <Edit className="h-1 w-1 text-emerald-500" />
             </Button>
           </Link>
 
           <Button
-            className="bg-red-500"
+            className="bg-transparent hover:bg-transparent"
             onClick={() => setIsDeleteModalOpen(true)}
           >
-            <Trash className="h-1 w-1" />
+            <Trash className="h-1 w-1 text-red-500 " />
           </Button>
 
           <DeleteDialog
