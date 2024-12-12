@@ -1,44 +1,50 @@
 "use client";
-import { redirect } from "next/navigation";
-import axios from "axios";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
 import { Device } from "./ListDevice.type";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { setDevices } from "@/app/store/deviceSlise";
-import axiosInstance from "@/lib/axiosInstance";
+import { Pagination } from "@/typs/pagination";
+import { useFetch } from "@/servises/useFetch";
+import { defaultFilter } from "@/typs/filter";
+
+const { fetchAll } = useFetch("gpsDevices");
+
 const ListDevices = () => {
-  //const { voitures, setVoitures } = useAutomobileContext();
   const dispatch = useAppDispatch();
   const devices = useAppSelector(
     (state: { devices: { devices: Device[] } }) => state.devices.devices
   );
+  const [pagination, setPagination] = useState<Pagination>();
+  const [filter, setFilter] = useState({ ...defaultFilter });
 
   useEffect(() => {
-    const fetchVoitures = async () => {
-      try {
-        const response = await axiosInstance.get("gpsDevices");
-        
-
-        //setVoitures(fetchedVoitures);
-        dispatch(setDevices(response.data));
-        console.log("devices",response.data);
-
-      } catch (error) {
-        console.error("Erreur lors de la récupération des voitures :", error);
-      }
-    };
-
-    fetchVoitures();
-
-    // Set interval to fetch every minute
+    fetchVoitures(filter);
     const interval = setInterval(fetchVoitures, 60000);
-
-    // Clear interval on component unmount
     return () => clearInterval(interval);
-  }, [dispatch]); // Le tableau de dépendances vide [] signifie que ce useEffect est appelé une seule fois au montage du composant
-  return <DataTable columns={columns} data={devices} />;
+  }, [dispatch]);
+
+  const fetchVoitures = async (baseFilter: any) => {
+    try {
+      const response = await fetchAll(baseFilter);
+      setPagination(response.pagination);
+
+      dispatch(setDevices(response.data));
+      console.log("devices", response.data);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des voitures :", error);
+    }
+  };
+
+  return (
+    <DataTable
+      columns={columns}
+      data={devices}
+      // pagination={pagination as Pagination}
+      // fetch={fetchCompanies}
+    />
+  );
 };
 
 export default ListDevices;

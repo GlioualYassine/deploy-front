@@ -18,8 +18,8 @@ const SidebarItem = (props: SidebarItemProps) => {
   const toggleSubMenu = () => setSubMenuOpen(!subMenuOpen);
   const togglePaymentSubMenu = () => setPaymentSubMenuOpen(!paymentSubMenuOpen);
 
-  let isClient = href === "/clients";
-  let isPayment = href === "/paiement";
+  let isClient = false ;//href === "/clients";
+  let isPayment = false; //href === "/paiement";
 
   return (
     <div>
