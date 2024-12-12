@@ -199,6 +199,29 @@ const CompanyForm = () => {
               )}
             />
           </div>
+
+          <div className="grid grid-cols-2 gap-6">
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-700 font-medium">
+                    Password
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Password"
+                      type="password"
+                      className="transition-colors focus:border-blue-500"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
 
         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>

@@ -47,11 +47,11 @@ export const dataGeneralSidebar = [
 ];
 
 export const dataToolsSidebar = [
-  {
-    icon: Fuel,
-    label: "Carburant",
-    href: "/fuel",
-  },
+  // {
+  //   icon: Fuel,
+  //   label: "Carburant",
+  //   href: "/carburant",
+  // },
   {
     icon: MapPinned,
     label: "Suivi",
@@ -75,14 +75,14 @@ export const dataToolsSidebar = [
 ];
 
 export const dataSupportSidebar = [
-  {
-    icon: Settings,
-    label: "Paramètres",
-    href: "/setting",
-  },
-  {
-    icon: ShieldCheck,
-    label: "Sécurité",
-    href: "/security",
-  },
+  // {
+  //   icon: Settings,
+  //   label: "Paramètres",
+  //   href: "/setting",
+  // },
+  // {
+  //   icon: ShieldCheck,
+  //   label: "Sécurité",
+  //   href: "/security",
+  // },
 ];

@@ -22,7 +22,7 @@ const HeaderClients = () => {
         <DialogTrigger asChild>
           <Button>Créer Client</Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-1/2">
+        <DialogContent className="sm:max-w-[625px]">
           <DialogHeader>
             <DialogTitle>Créer Client</DialogTitle>
             <DialogDescription>

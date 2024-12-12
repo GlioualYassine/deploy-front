@@ -22,19 +22,19 @@ const SidebarRoutes = () => {
             ))}
           </div>
           <Separator />
-          <div className="p-2 md:p-6">
+          {/* <div className="p-2 md:p-6">
             <p className="text-slate-500 mb-2">SUPPORT</p>
             {dataSupportSidebar.map((item)=>(
               <SidebarItem key={item.label} item={item}/>
             ))}
-          </div>
+          </div> */}
           
 
         </div>
         <div>
           <Separator/>
           <footer className=" p-3 text-center">
-            2024. All rights reserved
+          ©2024 Ramycan ,Created by NOSTRUM
           </footer>
         </div>
     </div>

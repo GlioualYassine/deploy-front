@@ -78,27 +78,29 @@ const FormCreateAutomobile = (props: FormCreateClientProps) => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values);
     let { firstName, lastName, email, companyId } = values;
-      const parsedCompanyId = parseInt(companyId as string);
+    const parsedCompanyId = parseInt(companyId as string);
     try {
-       const response = await axiosInstance.post("users/clients", {
+      const response = await axiosInstance.post("users/clients", {
         firstName,
         lastName,
         email,
         companyId: parsedCompanyId,
       });
-      console.log(response.data)
+      console.log(response.data);
       toast({
         title: "Clients créé avec succès",
       });
-      dispatch(addClient({
-        id: response.data.id,
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        companyId: companyId as string,
-        role: response.data.role,
-        companyName: response.data.companyName,
-      }));
+      dispatch(
+        addClient({
+          id: response.data.id,
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          companyId: companyId as string,
+          role: response.data.role,
+          companyName: response.data.companyName,
+        })
+      );
       router.refresh();
       setOPenModalCreate(false);
     } catch (error) {
@@ -112,15 +114,15 @@ const FormCreateAutomobile = (props: FormCreateClientProps) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="grid grid-cols-1 gap-3 ">
+        <div className="grid grid-cols-2 gap-3 ">
           <FormField
             control={form.control}
             name="firstName"
             render={({ field }: { field: any }) => (
               <FormItem>
-                <FormLabel>Prénom CLient</FormLabel>
+                <FormLabel>Prénom</FormLabel>
                 <FormControl>
-                  <Input placeholder="prénom client" type="text" {...field} />
+                  <Input placeholder="Prénom" type="text" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -133,7 +135,7 @@ const FormCreateAutomobile = (props: FormCreateClientProps) => {
               <FormItem>
                 <FormLabel>Nom CLient</FormLabel>
                 <FormControl>
-                  <Input placeholder="nom client" type="text" {...field} />
+                  <Input placeholder="Nom" type="text" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -145,9 +147,23 @@ const FormCreateAutomobile = (props: FormCreateClientProps) => {
             name="email"
             render={({ field }: { field: any }) => (
               <FormItem>
-                <FormLabel>Email CLient</FormLabel>{" "}
+                <FormLabel>Email</FormLabel>{" "}
                 <FormControl>
-                  <Input placeholder="email client" type="text" {...field} />
+                  <Input placeholder="Email" type="email" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }: { field: any }) => (
+              <FormItem>
+                <FormLabel> Mot de passe</FormLabel>{" "}
+                <FormControl>
+                  <Input placeholder="Mot de passe" type="password" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -159,11 +175,11 @@ const FormCreateAutomobile = (props: FormCreateClientProps) => {
             name="companyId"
             render={({ field }: { field: any }) => (
               <FormItem>
-                <FormLabel>Company </FormLabel>
+                <FormLabel>Entreprise </FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
-                   // Set the default value of the select input
+                  // Set the default value of the select input
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -179,7 +195,6 @@ const FormCreateAutomobile = (props: FormCreateClientProps) => {
                           value={company.id.toString()}
                         >
                           {company.nameCompany}
-                          
                         </SelectItem>
                       ))}
                     </SelectGroup>
@@ -190,8 +205,8 @@ const FormCreateAutomobile = (props: FormCreateClientProps) => {
             )}
           />
         </div>
-        <Button className="mt-3" type="submit" disabled={!isValid}>
-          Créer Client
+        <Button className="mt-3 w-full" type="submit" disabled={!isValid}>
+          Créer
         </Button>
       </form>
     </Form>

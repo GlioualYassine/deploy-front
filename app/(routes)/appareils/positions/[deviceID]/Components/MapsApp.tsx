@@ -12,6 +12,9 @@ import { Separator } from "@/components/ui/separator";
 import { Card } from "@/components/ui/card";
 import axiosInstance from "@/lib/axiosInstance";
 import { format } from "date-fns";
+import { useFetch } from "@/servises/useFetch";
+import { Pagination } from "@/typs/pagination";
+import { defaultFilter } from "@/typs/filter";
 
 const tags = Array.from({ length: 50 }).map(
   (_, i, a) => `v1.2.0-beta.${a.length - i}`
@@ -61,6 +64,11 @@ function MapsApp({ imei }: { imei: string }) {
     return savedFavorites ? JSON.parse(savedFavorites) : [];
   });
 
+
+  const [filter, setFilter] = useState({ ...defaultFilter });
+  const [pagination, setPagination] = useState<Pagination>();
+
+
   const handleFavouriteClick = (eventId: number) => {
     let updatedFavourites = favourites.filter((id) => id !== eventId);
 
@@ -78,23 +86,27 @@ function MapsApp({ imei }: { imei: string }) {
       setActiveEvent(event);
     }
   };
+
+const { fetchAll } = useFetch(`positions/${imei}`);
+
   /// FETCHIN DATA
   useEffect(() => {
     // Appeler fitchData une fois dès le chargement du composant
-    fitchData();
+    fitchData(filter);
 
-    // Répéter l'appel toutes les 10 secondes (10000 ms)
-    const intervalId = setInterval(() => {
-      fitchData();
-    }, 10000);
+    // // Répéter l'appel toutes les 10 secondes (10000 ms)
+    // const intervalId = setInterval(() => {
+    //   fitchData();
+    // }, 10000);
 
     // Nettoyer l'intervalle à la destruction du composant pour éviter les fuites de mémoire
-    return () => clearInterval(intervalId);
+    // return () => clearInterval(intervalId);
   }, []);
 
-  const fitchData = async () => {
+  const fitchData = async (baseFilter: any) => {
     try {
-      const response = await axiosInstance.get(`positions/${imei}`);
+      const response = await fetchAll(baseFilter);
+      setPagination(response.pagination);
       console.log("response", response.data);
 
       setHistoryEvents(response.data);

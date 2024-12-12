@@ -195,27 +195,27 @@ export const columns: ColumnDef<Device>[] = [
       </div>
     ),
   },
-  {
-    accessorKey: "simNumber1",
-    header: "Numéro1",
-    cell: ({ row }) => (
-      <div className="font-medium">{row.getValue("simNumber1")}</div>
-    ),
-  },
-  {
-    accessorKey: "simNumber2",
-    header: "Numéro2",
-    cell: ({ row }) => (
-      <div className="font-medium">{row.getValue("simNumber2")}</div>
-    ),
-  },
-  {
-    accessorKey: "smsEmail",
-    header: "Email",
-    cell: ({ row }) => (
-      <div className="font-medium">{row.getValue("smsEmail")}</div>
-    ),
-  },
+  // {
+  //   accessorKey: "simNumber1",
+  //   header: "Numéro1",
+  //   cell: ({ row }) => (
+  //     <div className="font-medium">{row.getValue("simNumber1")}</div>
+  //   ),
+  // },
+  // {
+  //   accessorKey: "simNumber2",
+  //   header: "Numéro2",
+  //   cell: ({ row }) => (
+  //     <div className="font-medium">{row.getValue("simNumber2")}</div>
+  //   ),
+  // },
+  // {
+  //   accessorKey: "smsEmail",
+  //   header: "Email",
+  //   cell: ({ row }) => (
+  //     <div className="font-medium">{row.getValue("smsEmail")}</div>
+  //   ),
+  // },
 
   {
     accessorKey: "marque",
