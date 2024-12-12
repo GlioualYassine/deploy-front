@@ -22,21 +22,87 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { defaultFilter } from "@/typs/filter";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  fetch : (baseFilter: any) => void;
+  pagination: any;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  fetch,
+  pagination,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] =
     React.useState<ColumnFiltersState>([]);
 
   const [isMounted, setIsMounted] = React.useState<boolean>(false);
+  
+  const [filter, setFilter] = React.useState({ ...defaultFilter });
+
+  const handleNextPage = async () => {
+    if (filter.currentPage < pagination.totalPage) {
+      await fetch({
+        ...filter,
+        currentPage: filter.currentPage + 1,
+      });
+
+      setFilter({
+        ...filter,
+        currentPage: filter.currentPage + 1,
+      });
+    }
+  };
+
+  const handlePreviousPage = async () => {
+    if (filter.currentPage > 1) {
+      await fetch({
+        ...filter,
+        currentPage: filter.currentPage - 1,
+      });
+      setFilter({
+        ...filter,
+        currentPage: filter.currentPage - 1,
+      });
+    }
+  };
+
+  const changesize = async (size: any) => {
+    await fetch({
+      ...filter,
+      size: size,
+    });
+    setFilter({
+      ...filter,
+      size: size,
+    });
+  };
+
+  const handleFilter = async (value: string) => {
+    await fetch({
+      ...filter,
+      globalSearch: value,
+    });
+    setFilter({
+      ...filter,
+      globalSearch: value,
+    });
+  };
+
 
   React.useEffect(() => {
     setIsMounted(true);
@@ -66,9 +132,9 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center mb-2">
         <Input
           placeholder="Filtrer par marque de voiture"
-          value={(table.getColumn("Voituremarque")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("marque")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("Voituremarque")?.setFilterValue(event.target.value)
+            table.getColumn("marque")?.setFilterValue(event.target.value)
           }
         />
       </div>
@@ -120,24 +186,49 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
+      <div className="flex items-center justify-between space-x-2 py-4">
+        <div>
+          <span className="text-sm text-muted-foreground">
+            Showing {pagination?.offsetElements == 0 ? 1 : pagination?.offsetElements} -{" "}
+            {(pagination?.numberOfElements ?? 0) +
+              (pagination?.offsetElements ?? 0)}{" "}
+            of {pagination?.totalElements} results
+          </span>
+        </div>
+        <div className="flex items-center justify-end space-x-2 py-4">
+          <Select onValueChange={(value) => changesize(value)}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder={filter.size} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="5">5</SelectItem>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="25">25</SelectItem>
+                <SelectItem value="50">50</SelectItem>
+                <SelectItem value="100">100</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
 
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePreviousPage()}
+            disabled={filter.currentPage === 1}
+          >
+            Previous
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleNextPage()}
+            disabled={filter.currentPage === pagination?.totalPage}
+          >
+            Next
+          </Button>
+        </div>
       </div>
     </div>
   );

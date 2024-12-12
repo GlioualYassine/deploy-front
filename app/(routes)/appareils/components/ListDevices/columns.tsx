@@ -60,12 +60,11 @@ const ActionCell = ({ divice }: { divice: Device }) => {
   };
 
   return (
-    <div className="flex gap-3 justify-center items-center">
+    <div className="flex gap-1 justify-center items-center">
       {/* Bouton pour éditer */}
       <Link href={`appareils/${divice.id}`}>
         <Button className="flex gap-1 justify-center items-center dark:bg-slate-700 text-white bg-sky-950">
-          <Pencil className="w-4 h-4 mr-2" />
-          <p>Editer</p>
+          <Pencil className="w-4 h-4" />
         </Button>
       </Link>
 
@@ -73,8 +72,7 @@ const ActionCell = ({ divice }: { divice: Device }) => {
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger>
           <Button variant="destructive" onClick={() => setIsOpen(true)}>
-            <Trash className="w-4 h-4 mr-2" />
-            Supprimer
+            <Trash className="w-4 h-4" />
           </Button>
         </DialogTrigger>
         <DialogContent>
@@ -96,17 +94,15 @@ const ActionCell = ({ divice }: { divice: Device }) => {
       </Dialog>
       {/* Nouveau bouton pour l'historique des positions */}
       <Link href={`appareils/positions/${divice.imei}`}>
-      <Button className="flex gap-1 justify-center items-center dark:bg-[#4b5563] text-white bg-[#16a34a]">
-          <Eye className="w-4 h-4 mr-2" />
-          <p>Positions</p>
+        <Button className="flex gap-1 justify-center items-center dark:bg-[#4b5563] text-white bg-[#16a34a]">
+          <Eye className="w-4 h-4" />
         </Button>
       </Link>
 
       {/* Bouton pour afficher les notifications */}
       <Link href={`appareils/notifications/${divice.id}`}>
         <Button className="flex gap-1 justify-center items-center dark:bg-[#84385f] text-white bg-[#60a5fa]">
-          <BellDot className="w-4 h-4 mr-2" />
-          <p>Notifications</p>
+          <BellDot className="w-4 h-4" />
         </Button>
       </Link>
     </div>
@@ -117,33 +113,6 @@ export default ActionCell;
 
 // Colonne des appareils avec leurs actions
 export const columns: ColumnDef<Device>[] = [
-  {
-    accessorKey: "id",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        id
-        <ArrowUpDown className="mh-2 h-4 ml-2" />
-      </Button>
-    ),
-  },
-  {
-    accessorKey: "name",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Nom
-        <ArrowUpDown className="mh-2 h-4 ml-2" />
-      </Button>
-    ),
-    cell: ({ row }) => (
-      <div className="text-center font-medium">{row.getValue("name")}</div>
-    ),
-  },
   {
     accessorKey: "imei",
     header: ({ column }) => (
@@ -160,13 +129,29 @@ export const columns: ColumnDef<Device>[] = [
     ),
   },
   {
+    accessorKey: "nom",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Nom
+        <ArrowUpDown className="mh-2 h-4 ml-2" />
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <div className="text-center font-medium">{row.getValue("nom")}</div>
+    ),
+  },
+
+  {
     accessorKey: "deviceConnected",
     header: ({ column }) => (
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
-        IMEI
+        Etat
         <ArrowUpDown className="mh-2 h-4 ml-2" />
       </Button>
     ),
@@ -191,7 +176,7 @@ export const columns: ColumnDef<Device>[] = [
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
-        type de serveur
+        Serveur
         <ArrowUpDown className="mh-2 h-4 ml-2" />
       </Button>
     ),
@@ -212,79 +197,44 @@ export const columns: ColumnDef<Device>[] = [
   },
   {
     accessorKey: "simNumber1",
-    header: "simNumber1",
+    header: "Numéro1",
     cell: ({ row }) => (
       <div className="font-medium">{row.getValue("simNumber1")}</div>
     ),
   },
   {
     accessorKey: "simNumber2",
-    header: "simNumber2",
+    header: "Numéro2",
     cell: ({ row }) => (
       <div className="font-medium">{row.getValue("simNumber2")}</div>
     ),
   },
   {
     accessorKey: "smsEmail",
-    header: "smsEmail",
+    header: "Email",
     cell: ({ row }) => (
       <div className="font-medium">{row.getValue("smsEmail")}</div>
     ),
   },
+
   {
-    accessorKey: "VoitureNom",
+    accessorKey: "marque",
     header: ({ column }) => (
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
-        Nom voiture
+        Voiture
         <ArrowUpDown className="mh-2 h-4 ml-2" />
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="text-center font-medium">
-        {row.getValue("VoitureNom")}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "Voitureimmatricule",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Immatricule voiture
-        <ArrowUpDown className="mh-2 h-4 ml-2" />
-      </Button>
-    ),
-    cell: ({ row }) => (
-      <div className="text-center font-medium">
-        {row.getValue("Voitureimmatricule")}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "Voituremarque",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Marque Voiture
-        <ArrowUpDown className="mh-2 h-4 ml-2" />
-      </Button>
-    ),
-    cell: ({ row }) => (
-      <div className="text-center font-medium">
-        {row.getValue("Voituremarque")}
-      </div>
+      <div className="text-center font-medium">{row.getValue("marque")}</div>
     ),
   },
   {
     accessorKey: "actions",
-    header: "Actions",
+    header: () => <div className="text-center">Actions</div>,
     cell: ({ row }) => <ActionCell divice={row.original} />,
   },
 ];

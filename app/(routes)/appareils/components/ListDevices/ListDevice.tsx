@@ -41,8 +41,8 @@ const ListDevices = () => {
     <DataTable
       columns={columns}
       data={devices}
-      // pagination={pagination as Pagination}
-      // fetch={fetchCompanies}
+      pagination={pagination as Pagination}
+      fetch={fetchVoitures}
     />
   );
 };

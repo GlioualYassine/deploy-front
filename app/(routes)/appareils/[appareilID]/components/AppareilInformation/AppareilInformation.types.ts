@@ -39,7 +39,7 @@ export type Appareil = {
     email_Conducteur:string
     idCompany : number
     VoitureNom:string
-    Voituremarque:string
+    marque:string
     Voituremodele:string
     Voitureimmatricule:string
     speedAlertEnabled : boolean,

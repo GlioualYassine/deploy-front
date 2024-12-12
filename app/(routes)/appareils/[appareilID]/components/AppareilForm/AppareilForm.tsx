@@ -212,7 +212,7 @@ const AppareilForm = (props: AppareilInformationProps) => {
       lastNameConducteur: selcdriver.lastName || "",
       emailConducteur: selcdriver.email || "",
       nomVoiture: appareil.VoitureNom || "",
-      marqueVoiture: appareil.Voituremarque || "",
+      marqueVoiture: appareil.marque || "",
       modeleVoiture: appareil.Voituremodele || "",
       immatriculeVoiture: appareil.Voitureimmatricule || "",
       insuranceExpiryDate: appareil.insuranceExpiryDate.toString() || "",
@@ -266,7 +266,7 @@ const AppareilForm = (props: AppareilInformationProps) => {
               onClick={() => router.push("/appareils")}
             />{" "}
           </div>
-          <h1>Editer l&#39;appareil #{appareil.id}</h1>
+          <h1>Editer l&#39;appareil #{appareil.imei}</h1>
         </div>
         <CardHeader>
           <CardTitle className="text-xl">
