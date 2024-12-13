@@ -32,14 +32,12 @@ export const formSchema = z.object({
   sim2Appareil: z
     .string()
     .optional()
-    .refine((val) => val === undefined || /^\d{6,15}$/.test(val), {
+    .refine((val) => val === undefined || /^\d{0,15}$/.test(val), {
       message: "Le numéro de SIM2, s'il est fourni, doit contenir entre 6 et 15 chiffres.",
     }).optional(),
   smsEmailAppareil: z
     .string()
-    .email("L'adresse e-mail pour les SMS doit être valide.")
-    .min(6, "L'adresse e-mail pour les SMS doit contenir au moins 6 caractères.").nullable(),
-
+    .optional(),
   vitesseMaxAppareil: z
     .string()
     .optional(),
@@ -123,6 +121,10 @@ export const formSchema = z.object({
     .string()
     .email("L'adresse e-mail du conducteur doit être valide.")
     .optional(),
+    mdpConducteur: z
+    .string()
+    .min(8, "Le mot de passe du conducteur doit contenir au moins 8 caractères.")
+    ,
   // Informations de la company 
   idCompany: z
     .string()

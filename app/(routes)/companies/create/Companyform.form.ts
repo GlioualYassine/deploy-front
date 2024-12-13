@@ -6,6 +6,7 @@ export const formSchema = z.object({
     admin_first_name : z.string(),
     admin_last_name : z.string(),
     admin_email : z.string().email(),
+    password : z.string().min(8),
     adress : z.string(),
     phone : z.string().min(6),
 })

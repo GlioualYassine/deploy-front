@@ -137,7 +137,7 @@ const AppareilForm = (props: AppareilInformationProps) => {
       form.setValue("lastNameConducteur", ""); // Réinitialiser le nom du conducteur
       form.setValue("emailConducteur", ""); // Réinitialiser l'email du conducteur
     } else {
-      form.setValue("idConducteur", selcdriver.id); // Réinitialiser l'ID du conducteur
+      form.setValue("idConducteur", selcdriver.id.toString()); // Réinitialiser l'ID du conducteur
       form.setValue("firstNameConducteur", selcdriver.firstName); // Réinitialiser le prénom du conducteur
       form.setValue("lastNameConducteur", selcdriver.lastName); // Réinitialiser le nom du conducteur
       form.setValue("emailConducteur", selcdriver.email); // Réinitialiser l'email du conducteur
@@ -174,7 +174,7 @@ const AppareilForm = (props: AppareilInformationProps) => {
   const handleDriverDeselect = () => {
     setSelectedDriver(null);
     setDriverInputValue(""); // Réinitialiser l'input à une chaîne vide
-    form.setValue("idConducteur", 10); // Réinitialiser l'ID du conducteur
+    form.setValue("idConducteur", "10"); // Réinitialiser l'ID du conducteur
     form.setValue("firstNameConducteur", ""); // Réinitialiser le prénom du conducteur
     form.setValue("lastNameConducteur", ""); // Réinitialiser le nom du conducteur
     form.setValue("emailConducteur", ""); // Réinitialiser l'email du conducteur
@@ -183,7 +183,7 @@ const AppareilForm = (props: AppareilInformationProps) => {
   const handleDriverSelect = async (driver: Driver) => {
     setSelectedDriver(driver);
     setDriverInputValue(`${driver.firstName} ${driver.lastName}`);
-    form.setValue("idConducteur", Number(driver.id)); // Set selected driver id in form
+    form.setValue("idConducteur", driver.id?.toString() ?? undefined); // Set selected driver id in form
     form.setValue("firstNameConducteur", driver.firstName); // Set selected driver first name in form
     form.setValue("lastNameConducteur", driver.lastName); // Set selected driver last name in form
     form.setValue("emailConducteur", driver.email); // Set selected driver email in form
@@ -196,7 +196,7 @@ const AppareilForm = (props: AppareilInformationProps) => {
   let form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      idAppareil: appareil.id || 10, // Si appareil.id est vide, utilise une chaîne vide
+      idAppareil: appareil.id?.toString() || "10", // Si appareil.id est vide, utilise une chaîne vide
       nomAppareil: appareil.name || "",
       descriptionAppareil: appareil.description || "",
       actifAppareil: appareil.actif !== undefined ? appareil.actif : false, // Si actif est indéfini, utilise false
@@ -206,8 +206,8 @@ const AppareilForm = (props: AppareilInformationProps) => {
       sim2Appareil: appareil.simNumber2 || "", // Vérifie si appareil.simNumber1 est défini, sinon utilise une chaîne vide
       smsEmailAppareil: appareil.smsEmail || "",
       vitesseMaxAppareil:
-        appareil.vitesseMax !== undefined ? appareil.vitesseMax : 0, // Utilise 0 si vitesseMax n'est pas défini
-      idConducteur: appareil.idConducteur,
+        appareil.vitesseMax !== undefined ? appareil.vitesseMax.toString() : "0", // Utilise "0" si vitesseMax n'est pas défini
+      idConducteur: appareil.idConducteur?.toString() || "",
       firstNameConducteur: selcdriver.firstName || "",
       lastNameConducteur: selcdriver.lastName || "",
       emailConducteur: selcdriver.email || "",
@@ -218,7 +218,7 @@ const AppareilForm = (props: AppareilInformationProps) => {
       insuranceExpiryDate: appareil.insuranceExpiryDate.toString() || "",
       vignetteDeadline: appareil.vignetteDeadline.toString() || "",
       oilChangeDate: appareil.oilChangeDate.toString() || "",
-      idCompany: appareil.idCompany || -1,
+      idCompany: appareil.idCompany?.toString() || "-1",
       speedAlertEnabled: appareil.speedAlertEnabled || false,
       fuelAlertEnabled: appareil.fuelAlertEnabled || false,
       hoodOpenAlertEnabled: appareil.hoodOpenAlertEnabled || false,

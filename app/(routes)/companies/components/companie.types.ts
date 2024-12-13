@@ -5,6 +5,7 @@ export type Company =  {
     admin_last_name : string
     admin_email : string
     admin_id : number
+    password : string
     adress : string
     phone : string
 }   

@@ -110,12 +110,9 @@ const AppareilForm = () => {
         setFilteredDrivers(response.data); // Initialement, tous les conducteurs sont affichés
       })
       .catch((error) => {
-        console.error(
-          "Erreur lors de la récupération des conducteurs :",
-          error
-        );
+        console.error("Erreur lors de la récupération des clients :", error);
       });
-    const fetchCompanies = async () => {
+    /*const fetchCompanies = async () => {
       try {
         const response = await axiosInstance.get(
           "company/getCompaniesBasicInfo"
@@ -130,7 +127,7 @@ const AppareilForm = () => {
         });
       }
     };
-    fetchCompanies();
+    fetchCompanies();*/
   }, []);
 
   const handleInputChange = (value: string) => {
@@ -156,7 +153,7 @@ const AppareilForm = () => {
   const handleDriverSelect = async (driver: Driver) => {
     setSelectedDriver(driver);
     setInputValue(`${driver.firstName} ${driver.lastName}`);
-    form.setValue("idConducteur", driver.id ?? undefined); // Set selected driver id in form
+    form.setValue("idConducteur", driver.id?.toString() ?? undefined); // Set selected driver id in form
     form.setValue("firstNameConducteur", driver.firstName); // Set selected driver first name in form
     form.setValue("lastNameConducteur", driver.lastName); // Set selected driver last name in form
     form.setValue("emailConducteur", driver.email); // Set selected driver email in form
@@ -186,13 +183,6 @@ const AppareilForm = () => {
       setInputCompanyValue(company.nameCompany);
       form.setValue("idCompany", company.id);
     }
-  };
-
-  const handleCompanyDeselect = () => {
-    setSelectedCompany(null);
-    setInputCompanyValue(""); // Réinitialiser l'input à une chaîne vide
-    form.setValue("idCompany", null); // Réinitialiser l'ID de l'entreprise
-    setFilteredCompanies(companies); // Réinitialiser les entreprises filtrées
   };
 
   let form = useForm<z.infer<typeof formSchema>>({
@@ -226,6 +216,7 @@ const AppareilForm = () => {
       oilChangeDate: new Date().toISOString(),
       idCompany: null,
       deviceConnected: true,
+      mdpConducteur: "",
     },
   });
 
@@ -268,6 +259,7 @@ const AppareilForm = () => {
       firstNameConducteur,
       lastNameConducteur,
       emailConducteur,
+      mdpConducteur,
 
       nomVoiture,
       marqueVoiture,
@@ -287,6 +279,7 @@ const AppareilForm = () => {
           firstName: firstNameConducteur,
           lastName: lastNameConducteur,
           email: emailConducteur,
+          password: mdpConducteur,
           companyId: idCompany,
           role: "ROLE_USER",
         });
@@ -351,6 +344,12 @@ const AppareilForm = () => {
         insuranceExpiryDate: response.data.insuranceExpiryDate,
         oilChangeDate: response.data.oilChangeDate,
         vignetteDeadline: response.data.vignetteDeadline,
+        dateCreation: "",
+        deviceConnected: "",
+        deviceDeactivationAlert: "",
+        fuelLevel: "",
+        immatricule: response.data.Voitureimmatricule,
+        modele: response.data.voitureModele,
       };
       dispatch(addDevice(newAppareil));
 
@@ -429,8 +428,6 @@ const AppareilForm = () => {
                               <SelectItem value="TELTONIKA_SERVER">
                                 Teltonika
                               </SelectItem>
-                              <SelectItem value="s1">S1</SelectItem>
-                              <SelectItem value="s2">S2</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -705,9 +702,7 @@ const AppareilForm = () => {
                                       name="lastNameConducteur"
                                       render={({ field }) => (
                                         <FormItem>
-                                          <FormLabel>
-                                            Prénom Client
-                                          </FormLabel>
+                                          <FormLabel>Prénom Client</FormLabel>
                                           <FormControl>
                                             <Input
                                               placeholder="Prénom conducteur"
@@ -726,9 +721,7 @@ const AppareilForm = () => {
                                       name="emailConducteur"
                                       render={({ field }) => (
                                         <FormItem>
-                                          <FormLabel>
-                                            Email Client
-                                          </FormLabel>
+                                          <FormLabel>Email Client</FormLabel>
                                           <FormControl>
                                             <Input
                                               placeholder="Description"
@@ -750,8 +743,8 @@ const AppareilForm = () => {
                             // Formulaire pour ajouter un nouveau conducteur
                             <div>
                               <CardDescription className="mb-6 mt-5">
-                                Entrez les informations du conducteur pour
-                                assurer un suivi précis des utilisateurs de
+                                Entrez les informations du client pour assurer
+                                un suivi précis des utilisateurs de
                                 l&#39;appareil.
                               </CardDescription>
 
@@ -804,6 +797,26 @@ const AppareilForm = () => {
                                             placeholder="Email conducteur"
                                             type="text"
                                             {...field}
+                                          />
+                                        </FormControl>
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+                                  <FormField
+                                    control={form.control}
+                                    name="mdpConducteur"
+                                    render={({ field }) => (
+                                      <FormItem>
+                                        <FormLabel>
+                                          Mot de passe Client
+                                        </FormLabel>
+                                        <FormControl>
+                                          <Input
+                                            placeholder="Description"
+                                            type="text"
+                                            {...field}
+                                            
                                           />
                                         </FormControl>
                                         <FormMessage />
@@ -880,7 +893,7 @@ const AppareilForm = () => {
                       // Si aucun conducteur n'existe, afficher directement le formulaire
                       <div>
                         <CardDescription className="mb-6 mt-5">
-                          Veuillez ajouter un nouveau conducteur.
+                          Veuillez ajouter un nouveau client.
                         </CardDescription>
                         <div className="items-center p-3 w-[90%] mx-auto grid grid-cols-1 md:grid-cols-2 gap-3 gap-x-20">
                           <FormField
@@ -928,6 +941,26 @@ const AppareilForm = () => {
                                     placeholder="Email conducteur"
                                     type="text"
                                     {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="mdpConducteur"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Mot de passe Client</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    placeholder="**********"
+                                    type="text"
+                                    {...field}
+                                    
+                                    className=""
                                   />
                                 </FormControl>
                                 <FormMessage />
@@ -1040,7 +1073,9 @@ const AppareilForm = () => {
                       name="insuranceExpiryDate"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Date d&#39;expiration d&#39;assurance</FormLabel>{" "}
+                          <FormLabel>
+                            Date d&#39;expiration d&#39;assurance
+                          </FormLabel>{" "}
                           <br />
                           <FormControl>
                             <Popover>
@@ -1170,7 +1205,7 @@ const AppareilForm = () => {
                         </FormItem>
                       )}
                     />
-                    
+
                     <FormField
                       control={form.control}
                       name="speedAlertEnabled"
