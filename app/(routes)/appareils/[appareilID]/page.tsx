@@ -38,7 +38,6 @@ const AutomobileIdPage = ({ params }: { params: { appareilID: string } }) => {
 
   return (
     <div>
-      <Header />
       <AppareilInfrormation appareil={appareil} />
     </div>
   );

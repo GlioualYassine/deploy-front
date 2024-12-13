@@ -156,7 +156,7 @@ const AppareilForm = () => {
   const handleDriverSelect = async (driver: Driver) => {
     setSelectedDriver(driver);
     setInputValue(`${driver.firstName} ${driver.lastName}`);
-    form.setValue("idConducteur", Number(driver.id)); // Set selected driver id in form
+    form.setValue("idConducteur", driver.id ?? undefined); // Set selected driver id in form
     form.setValue("firstNameConducteur", driver.firstName); // Set selected driver first name in form
     form.setValue("lastNameConducteur", driver.lastName); // Set selected driver last name in form
     form.setValue("emailConducteur", driver.email); // Set selected driver email in form
@@ -167,7 +167,7 @@ const AppareilForm = () => {
   const handleDeselect = () => {
     setSelectedDriver(null);
     setInputValue(""); // Réinitialiser l'input à une chaîne vide
-    form.setValue("idConducteur", 10); // Réinitialiser l'ID du conducteur
+    form.setValue("idConducteur", "10"); // Réinitialiser l'ID du conducteur
     form.setValue("firstNameConducteur", ""); // Réinitialiser le prénom du conducteur
     form.setValue("lastNameConducteur", ""); // Réinitialiser le nom du conducteur
     form.setValue("emailConducteur", ""); // Réinitialiser l'email du conducteur
@@ -198,7 +198,7 @@ const AppareilForm = () => {
   let form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      idAppareil: 10,
+      idAppareil: "10",
       nomAppareil: "",
       descriptionAppareil: "",
       actifAppareil: true,
@@ -207,13 +207,13 @@ const AppareilForm = () => {
       sim1Appareil: "",
       sim2Appareil: "",
       smsEmailAppareil: "",
-      vitesseMaxAppareil: 0,
+      vitesseMaxAppareil: "0",
 
       speedAlertEnabled: false,
       fuelAlertEnabled: false,
       hoodOpenAlertEnabled: false,
 
-      idConducteur: 0,
+      idConducteur: "0",
       firstNameConducteur: "",
       lastNameConducteur: "",
       emailConducteur: "",
@@ -571,12 +571,13 @@ const AppareilForm = () => {
                           <FormControl>
                             <Input
                               placeholder="120"
-                              type="text"
+                              type="string"
                               value={field.value ?? ""} // Assure que la valeur soit toujours une chaîne
                               onChange={field.onChange}
                               onBlur={field.onBlur}
                               name={field.name}
                               ref={field.ref}
+                              min={50}
                             />
                           </FormControl>
                           <FormMessage />
@@ -587,7 +588,7 @@ const AppareilForm = () => {
 
                   <Separator className="my-12" />
                   <CardTitle className="text-xl mb-3">
-                    Informations du conducteur
+                    Informations du client
                   </CardTitle>
 
                   <motion.div
@@ -604,7 +605,7 @@ const AppareilForm = () => {
                             <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-md">
                               <div className="space-y-0.5">
                                 <CardDescription className="">
-                                  Cocher si C&#39;est un nouveau conducteur
+                                  Cocher si C&#39;est un nouveau client
                                 </CardDescription>
                               </div>
                               <Switch
@@ -642,7 +643,7 @@ const AppareilForm = () => {
 
                                   <CommandList>
                                     <CommandEmpty>
-                                      Aucun conducteur trouvé.
+                                      Aucun client trouvé.
                                     </CommandEmpty>
                                     <CommandGroup heading="Suggestions">
                                       {filteredDrivers.map((driver) => (
@@ -675,7 +676,7 @@ const AppareilForm = () => {
                                 <Card className="w-full mt-5 md:mt-0 border-1 md:border-l-2 shadow-sm md:shadow-none md:rounded-none">
                                   <CardHeader>
                                     <CardDescription className="text-center">
-                                      Information du conducteur choisi
+                                      Information du client choisi
                                     </CardDescription>
                                   </CardHeader>
 
@@ -685,7 +686,7 @@ const AppareilForm = () => {
                                       name="firstNameConducteur"
                                       render={({ field }) => (
                                         <FormItem>
-                                          <FormLabel>Nom Conducteur</FormLabel>
+                                          <FormLabel>Nom Client</FormLabel>
                                           <FormControl>
                                             <Input
                                               placeholder="Nom conducteur"
@@ -705,7 +706,7 @@ const AppareilForm = () => {
                                       render={({ field }) => (
                                         <FormItem>
                                           <FormLabel>
-                                            Prénom Conducteur
+                                            Prénom Client
                                           </FormLabel>
                                           <FormControl>
                                             <Input
@@ -726,7 +727,7 @@ const AppareilForm = () => {
                                       render={({ field }) => (
                                         <FormItem>
                                           <FormLabel>
-                                            Email conducteur
+                                            Email Client
                                           </FormLabel>
                                           <FormControl>
                                             <Input
@@ -761,7 +762,7 @@ const AppareilForm = () => {
                                     name="firstNameConducteur"
                                     render={({ field }) => (
                                       <FormItem>
-                                        <FormLabel>Nom Conducteur</FormLabel>
+                                        <FormLabel>Nom Client</FormLabel>
                                         <FormControl>
                                           <Input
                                             placeholder="Nom conducteur"
@@ -779,7 +780,7 @@ const AppareilForm = () => {
                                     name="lastNameConducteur"
                                     render={({ field }) => (
                                       <FormItem>
-                                        <FormLabel>Prénom Conducteur</FormLabel>
+                                        <FormLabel>Prénom Client</FormLabel>
                                         <FormControl>
                                           <Input
                                             placeholder="Prénom conducteur"
@@ -797,7 +798,7 @@ const AppareilForm = () => {
                                     name="emailConducteur"
                                     render={({ field }) => (
                                       <FormItem>
-                                        <FormLabel>Email conducteur</FormLabel>
+                                        <FormLabel>Email Client</FormLabel>
                                         <FormControl>
                                           <Input
                                             placeholder="Email conducteur"
@@ -834,7 +835,7 @@ const AppareilForm = () => {
                                   {/* Ajout de hauteur fixe et du défilement */}
                                   <CommandList className="md:max-h-56 overflow-y-auto">
                                     <CommandEmpty>
-                                      Aucun conducteur trouvé.
+                                      Aucun Client trouvé.
                                     </CommandEmpty>
 
                                     <CommandGroup heading="Suggestions">

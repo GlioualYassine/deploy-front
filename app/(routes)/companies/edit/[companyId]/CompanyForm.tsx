@@ -195,6 +195,24 @@ const CompanyForm = (props: CompanyFormProps) => {
                   </FormItem>
                 )}
               />
+
+<FormField
+                control={form.control}
+                name="admin_password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Mot de passe de l’Admin</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="***************"
+                        type="email"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
           </form>
         </Form>

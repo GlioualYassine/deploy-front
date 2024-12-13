@@ -174,13 +174,14 @@ const { fetchAll } = useFetch(`positions/${imei}`);
             ))}
           {activeEvent && (
             <Popup
+            className=" !bg-white rounded-lg"
             position={[
               parseFloat(activeEvent.latitude),
               parseFloat(activeEvent.longitude),
             ]}
             closeOnClick={false}
           >
-            <div className="p-4 bg-white rounded-lg shadow-xl max-w-xs w-full">
+            <div className="">
               {/* Titre avec un style soigné */}
               <h2 className="font-bold text-xl text-blue-600 mb-3 truncate">
                 {activeEvent.imei}

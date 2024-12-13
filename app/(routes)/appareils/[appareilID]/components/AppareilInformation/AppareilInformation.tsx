@@ -10,7 +10,7 @@ const AppareilInfrormation = (props: AppareilInformationProps) => {
 
   return (
     <div className="mt-5 grid grid-cols-1 ">
-      <div className="rounded-lg bg-background shadow-md hover:shadow-lg p-4">
+      <div className="rounded-lg bg-background  ">
         <AppareilForm appareil={appareil} />
       </div>
     </div>

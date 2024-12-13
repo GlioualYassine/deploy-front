@@ -461,7 +461,7 @@ const AppareilForm = (props: AppareilInformationProps) => {
                           <FormControl>
                             <Input
                               placeholder="120"
-                              type="text"
+                              type="number"
                               value={field.value ?? ""} // Assure que la valeur soit toujours une chaîne
                               onChange={field.onChange}
                               onBlur={field.onBlur}

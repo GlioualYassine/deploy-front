@@ -8,7 +8,7 @@ export type User = {
 };
 
 export type Device = {
-  id: number;
+  id: string;
   imei: string;
   nom: string;
   serverType: string;
