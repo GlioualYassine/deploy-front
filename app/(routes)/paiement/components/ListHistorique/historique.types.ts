@@ -1,5 +1,3 @@
-import { Pagination } from "@/typs/pagination";
-
 export interface PaymentLine {
     id: number;
     imei: string;
@@ -26,6 +24,4 @@ export interface Payment {
 
 export interface listHistoriqueProps {
     paiements: Payment[];
-    pagination: Pagination;
-    fetch: (filter: any) => void;
 }
