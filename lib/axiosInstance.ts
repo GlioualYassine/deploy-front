@@ -2,7 +2,7 @@ import axios from "axios";
 
 const axiosInstance = axios.create({
   // baseURL: "https://api.ramycan.com/api/v1/", // Your backend base URL  https://api.ramycan.com/api/v1/
-  baseURL: "http://localhost:8080/api/v1/", // Your backend base URL  http://localhost:8080/api/v1/
+  baseURL: "https://api.ramycan.com/api/v1/", // Your backend base URL  http://localhost:8080/api/v1/
   headers: {
     "Content-Type": "application/json",
   },
