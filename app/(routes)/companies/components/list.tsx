@@ -10,9 +10,11 @@ import { useFetch } from "@/servises/useFetch";
 import { Pagination } from "@/typs/pagination";
 import { defaultFilter } from "@/typs/filter";
 
-const { fetchAll } = useFetch("company");
 
 const ListCompanies = () => {
+
+  const { fetchAll } = useFetch("company");
+
   const dispatch = useDispatch();
   const companies = useAppSelector((state) => state.companies);
   const [filter, setFilter] = useState({ ...defaultFilter });

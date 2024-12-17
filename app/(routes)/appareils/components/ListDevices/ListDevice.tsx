@@ -9,9 +9,10 @@ import { Pagination } from "@/typs/pagination";
 import { useFetch } from "@/servises/useFetch";
 import { defaultFilter } from "@/typs/filter";
 
-const { fetchAll } = useFetch("gpsDevices");
 
 const ListDevices = () => {
+  const { fetchAll } = useFetch("gpsDevices");
+
   const dispatch = useAppDispatch();
   const devices = useAppSelector(
     (state: { devices: { devices: Device[] } }) => state.devices.devices

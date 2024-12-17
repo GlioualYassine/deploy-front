@@ -9,9 +9,10 @@ import { Pagination } from "@/typs/pagination";
 import { DataTable } from "./components/data-table";
 import { columns } from "./components/columns";
 
-const { fetchAll } = useFetch("paiements");
 
 const Page = () => {
+  const { fetchAll } = useFetch("paiements");
+
   const [paiements, setPaiements] = useState<any[]>([]);
   const [filter, setFilter] = useState({ ...defaultFilter });
   const [pagination, setPagination] = useState<Pagination>();

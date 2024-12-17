@@ -14,6 +14,61 @@ import axiosInstance from "@/lib/axiosInstance";
 
 import { useDispatch } from "react-redux";
 
+// Component for Actions Column
+const ActionsCell = ({ row }: { row: any }) => {
+  const dispatch = useDispatch();
+  const { toast } = useToast();
+  const { id } = row.original;
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const handleDelete = async () => {
+    await axiosInstance
+      .delete(`/company/${id}`)
+      .then(() => {
+        dispatch(deleteCompany(id));
+        toast({
+          title: "Success",
+          description: "Company deleted successfully",
+          className: "bg-green-500 text-white",
+        });
+        setIsDeleteModalOpen(false);
+      })
+      .catch((error) => {
+        toast({
+          title: "Error",
+          description: "An error occurred while deleting the company",
+          className: "bg-red-500 text-white",
+        });
+        console.log(error);
+      });
+  };
+
+  return (
+    <div className="flex items-center justify-center">
+      <Link href={`/companies/edit/${id}`}>
+        <Button className="bg-transparent hover:bg-transparent">
+          <Edit className="h-1 w-1 text-emerald-500" />
+        </Button>
+      </Link>
+
+      <Button
+        className="bg-transparent hover:bg-transparent"
+        onClick={() => setIsDeleteModalOpen(true)}
+      >
+        <Trash className="h-1 w-1 text-red-500" />
+      </Button>
+
+      <DeleteDialog
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDelete}
+        title="Êtes-vous sûr ?"
+        description="Cette action ne peut pas être annulée. Cela supprimera définitivement votre élément."
+      />
+    </div>
+  );
+};
+
 export const columns: ColumnDef<Company>[] = [
   {
     accessorKey: "id",
@@ -62,60 +117,6 @@ export const columns: ColumnDef<Company>[] = [
   {
     accessorKey: "actions",
     header: "Actions",
-    cell: ({ row }) => {
-      const dispatch = useDispatch();
-
-      const { toast } = useToast();
-      const { id } = row.original;
-      const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
-      const handleDelete = async () => {
-        await axiosInstance
-          .delete(`/company/${id}`)
-          .then(() => {
-            dispatch(deleteCompany(id));
-            toast({
-              title: "Success",
-              description: "Company deleted successfully",
-              className: "bg-green-500 text-white",
-            });
-            setIsDeleteModalOpen(false);
-          })
-          .catch((error) => {
-            // create a toast
-            toast({
-              title: "Error",
-              description: "An error occurred while deleting the company",
-              className: "bg-red-500 text-white",
-            });
-            console.log(error);
-          });
-      };
-
-      return (
-        <div className="flex items-center justify-center">
-          <Link href={`/companies/edit/${id}`}>
-            <Button className="bg-transparent hover:bg-transparent">
-              <Edit className="h-1 w-1 text-emerald-500" />
-            </Button>
-          </Link>
-
-          <Button
-            className="bg-transparent hover:bg-transparent"
-            onClick={() => setIsDeleteModalOpen(true)}
-          >
-            <Trash className="h-1 w-1 text-red-500 " />
-          </Button>
-
-          <DeleteDialog
-            isOpen={isDeleteModalOpen}
-            onClose={() => setIsDeleteModalOpen(false)}
-            onConfirm={handleDelete}
-            title="Êtes-vous sûr ?"
-            description="Cette action ne peut pas être annulée. Cela supprimera définitivement votre élément."
-          />
-        </div>
-      );
-    },
+    cell: ActionsCell, // Use the React Component here
   },
 ];

@@ -33,6 +33,7 @@ import { addClient } from "@/app/store/clientsSlice";
 const formSchema = z.object({
   firstName: z.string().min(2).max(50),
   lastName: z.string().min(2).max(50),
+  password: z.string().min(6),
   email: z.string().min(6),
   companyId: z.string().nullable(),
 });
@@ -69,6 +70,7 @@ const FormCreateAutomobile = (props: FormCreateClientProps) => {
       lastName: "",
       email: "",
       companyId: "",
+      password: "",
     },
   });
 

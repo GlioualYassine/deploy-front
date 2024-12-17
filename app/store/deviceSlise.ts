@@ -26,7 +26,7 @@ const DeviceSlice = createSlice({
       console.log(action.payload);
       state.devices[index] = action.payload;
     },
-    deleteDevice(state, action: PayloadAction<number>) {
+    deleteDevice(state, action: PayloadAction<string>) {
       state.devices = state.devices.filter(
         (device) => device.id !== action.payload
       );

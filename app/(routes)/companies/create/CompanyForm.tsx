@@ -97,7 +97,7 @@ const CompanyForm = () => {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nom de l'entreprise</FormLabel>
+                      <FormLabel>Nom de l&apos;entreprise</FormLabel>
                       <FormControl>
                         <Input placeholder="Nom de l'entreprise" {...field} />
                       </FormControl>
@@ -136,7 +136,7 @@ const CompanyForm = () => {
                   name="admin_first_name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Prénom de l'Admin</FormLabel>
+                      <FormLabel>Prénom de l&apos;Admin</FormLabel>
                       <FormControl>
                         <Input placeholder="Prénom" {...field} />
                       </FormControl>
@@ -149,7 +149,7 @@ const CompanyForm = () => {
                   name="admin_last_name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nom de l'Admin</FormLabel>
+                      <FormLabel>Nom de l&apos;Admin</FormLabel>
                       <FormControl>
                         <Input placeholder="Nom" {...field} />
                       </FormControl>
@@ -162,7 +162,7 @@ const CompanyForm = () => {
                   name="admin_email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email de l'Admin</FormLabel>
+                      <FormLabel>Email de l&apos;Admin</FormLabel>
                       <FormControl>
                         <Input placeholder="admin@example.com" type="email" {...field} />
                       </FormControl>
@@ -191,7 +191,7 @@ const CompanyForm = () => {
                 whileTap={{ scale: 0.99 }}
               >
                 <Button type="submit" className="w-full">
-                  Créer l'entreprise
+                  Créer l&apos;entreprise
                 </Button>
               </motion.div>
             </form>

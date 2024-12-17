@@ -72,6 +72,7 @@ const CompanyForm = (props: CompanyFormProps) => {
           admin_first_name: values.admin_first_name,
           admin_last_name: values.admin_last_name,
           admin_email: values.admin_email,
+          password : values.password
         };
 
         dispatch(modifyCompany(c));
@@ -198,7 +199,7 @@ const CompanyForm = (props: CompanyFormProps) => {
 
 <FormField
                 control={form.control}
-                name="admin_password"
+                name="password"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Mot de passe de l’Admin</FormLabel>

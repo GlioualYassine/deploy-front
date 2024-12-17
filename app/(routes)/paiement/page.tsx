@@ -10,9 +10,10 @@ import { defaultFilter } from "@/typs/filter";
 import { Pagination } from "@/typs/pagination";
 import DownloadInvoice from "./components/pdf/DownloadInvoice";
 
-const { fetchAll } = useFetch("paiements");
 
 const Page = () => {
+  const { fetchAll } = useFetch("paiements");
+
   const [paiements, setPaiements] = useState<Payment[]>([]);
   const [filter, setFilter] = useState({ ...defaultFilter });
   const [pagination, setPagination] = useState<Pagination>();
