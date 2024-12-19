@@ -79,7 +79,7 @@ const FormCreateAutomobile = (props: FormCreateClientProps) => {
   // Define the submit handler for the form
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values);
-    let { firstName, lastName, email, companyId } = values;
+    let { firstName, lastName, email, companyId,password } = values;
     const parsedCompanyId = parseInt(companyId as string);
     try {
       const response = await axiosInstance.post("users/clients", {
@@ -87,6 +87,7 @@ const FormCreateAutomobile = (props: FormCreateClientProps) => {
         lastName,
         email,
         companyId: parsedCompanyId,
+        password
       });
       console.log(response.data);
       toast({
@@ -98,6 +99,7 @@ const FormCreateAutomobile = (props: FormCreateClientProps) => {
           firstName: firstName,
           lastName: lastName,
           email: email,
+          password: password,
           companyId: companyId as string,
           role: response.data.role,
           companyName: response.data.companyName,

@@ -75,6 +75,7 @@ interface Driver {
   lastName: string;
   email: string;
   role: string;
+  password: string;
 }
 
 const AppareilForm = () => {
@@ -100,6 +101,8 @@ const AppareilForm = () => {
   const [selectedCompany, setSelectedCompany] = useState<any>(null);
   const [filteredCompanies, setFilteredCompanies] = useState<any[]>([]);
   const [query, setQuery] = useState("");
+
+
 
   // Fonction pour récupérer tous les conducteurs lors du chargement initial du composant
   useEffect(() => {
@@ -198,7 +201,7 @@ const AppareilForm = () => {
       sim2Appareil: "",
       smsEmailAppareil: "",
       vitesseMaxAppareil: "0",
-
+      isNewDriver,
       speedAlertEnabled: false,
       fuelAlertEnabled: false,
       hoodOpenAlertEnabled: false,
@@ -291,7 +294,7 @@ const AppareilForm = () => {
         conducteurObject = drivers.find(
           (d) => d.id == idConducteur?.toString()
         );
-        //conducteurObject.password = "password"; // Ajouter un mot de passe par défaut
+       
         //console.log(conducteurObject)
       }
 
@@ -366,6 +369,11 @@ const AppareilForm = () => {
       });
     }
   };
+
+
+  useEffect(() => {
+    form.setValue("isNewDriver", isNewDriver);
+  }, [isNewDriver, form]);
 
   return (
     <div className="">
@@ -813,7 +821,7 @@ const AppareilForm = () => {
                                         </FormLabel>
                                         <FormControl>
                                           <Input
-                                            placeholder="Description"
+                                            placeholder="************"
                                             type="text"
                                             {...field}
                                             
@@ -956,7 +964,7 @@ const AppareilForm = () => {
                                 <FormLabel>Mot de passe Client</FormLabel>
                                 <FormControl>
                                   <Input
-                                    placeholder="**********"
+                                    placeholder="***********"
                                     type="text"
                                     {...field}
                                     
