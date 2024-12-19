@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 import { useAppDispatch } from "@/app/store/hooks";
 import { addCompany } from "@/app/store/companySlice";
 import { Company } from "../components/companie.types";
-import { formSchema } from "./Companyform.form";
+
 import axiosInstance from "@/lib/axiosInstance";
 
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { ArrowLeft } from 'lucide-react';
+import { formSchema } from "../edit/[companyId]/Companyform.form";
 
 const CompanyForm = () => {
   const router = useRouter();
@@ -66,8 +67,8 @@ const CompanyForm = () => {
       router.push("/companies");
     } catch (error) {
       toast({
-        title: "Erreur lors de la création",
-        description: "Réessayez plus tard",
+        title: "Erreur lors de la création de l'entreprise",
+        description: "Email already exists or Company name already exists",
         variant: "destructive",
       });
     }

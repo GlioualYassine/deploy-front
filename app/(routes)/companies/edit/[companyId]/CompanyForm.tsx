@@ -24,7 +24,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { formSchema } from "../../create/Companyform.form";
+import { formSchema } from "./Companyform.form";
 import {  ChevronLeft } from "lucide-react";
 import { Company } from "../../components/companie.types";
 import { CompanyFormProps } from "./Companyform.types";
@@ -57,6 +57,7 @@ const CompanyForm = (props: CompanyFormProps) => {
         adminFirstName: values.admin_first_name,
         adminLastName: values.admin_last_name,
         adminEmail: values.admin_email,
+        password: values.password,
       };
 
       if (company?.id) {
