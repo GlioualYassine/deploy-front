@@ -83,6 +83,7 @@ const ClientInformations = (props: { utilisateur: UtilisateurProp }) => {
         email,
         role,
         companyId,
+        password: null,
       });
       toast({
         title: "Utilisateur modifié avec succès",
