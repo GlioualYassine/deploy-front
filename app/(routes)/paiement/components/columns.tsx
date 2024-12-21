@@ -12,6 +12,7 @@ import { format } from "date-fns";
 import { Payment } from "./historique.types"; // Adjust the path to where PaiementResponse is defined
 import axiosInstance from "@/lib/axiosInstance";
 import { Badge } from "@/components/ui/badge";
+import DownloadInvoice from "./pdf/DownloadInvoice";
 
 // Define columns for the table
 export const columns: ColumnDef<Payment>[] = [
@@ -97,16 +98,20 @@ export const columns: ColumnDef<Payment>[] = [
     ),
     cell: ({ row }) => {
       const isPaid = row.getValue("isPaid");
-      const badgeColor = isPaid ? "border-green-500 text-green-500" : "border-red-500 text-red-500 "; 
-    
+      const badgeColor = isPaid
+        ? "border-green-500 text-green-500"
+        : "border-red-500 text-red-500 ";
+
       return (
         <div className="text-center font-medium">
-          <Badge className={`border ${badgeColor} px-2 py-1 rounded bg-transparent hover:bg-transparent`}>
+          <Badge
+            className={`border ${badgeColor} px-2 py-1 rounded bg-transparent hover:bg-transparent`}
+          >
             {isPaid ? "Paid" : "Unpaid"}
           </Badge>
         </div>
       );
-    },    
+    },
   },
   {
     accessorKey: "actions",
@@ -114,26 +119,26 @@ export const columns: ColumnDef<Payment>[] = [
     cell: ({ row }) => {
       const { id } = row.original;
 
-      const handleDownloadReceipt = async (id: string) => {
-        try {
-          const response = await axiosInstance.get(`/paiements/${id}/receipt`, {
-            responseType: "blob", // Ensures response is processed as binary data
-          });
+      // const handleDownloadReceipt = async (id: string) => {
+      //   try {
+      //     const response = await axiosInstance.get(`/paiements/${id}/receipt`, {
+      //       responseType: "blob", // Ensures response is processed as binary data
+      //     });
 
-          const url = window.URL.createObjectURL(
-            new Blob([response.data], { type: "application/pdf" })
-          );
-          const link = document.createElement("a");
-          link.href = url;
-          link.setAttribute("download", `PaymentReceipt_${id}.pdf`); // Set the download file name
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        } catch (error) {
-          console.error("Error downloading the receipt:", error);
-          alert("Échec du téléchargement du reçu.");
-        }
-      };
+      //     const url = window.URL.createObjectURL(
+      //       new Blob([response.data], { type: "application/pdf" })
+      //     );
+      //     const link = document.createElement("a");
+      //     link.href = url;
+      //     link.setAttribute("download", `PaymentReceipt_${id}.pdf`); // Set the download file name
+      //     document.body.appendChild(link);
+      //     link.click();
+      //     document.body.removeChild(link);
+      //   } catch (error) {
+      //     console.error("Error downloading the receipt:", error);
+      //     alert("Échec du téléchargement du reçu.");
+      //   }
+      // };
 
       return (
         <DropdownMenu>
@@ -147,16 +152,11 @@ export const columns: ColumnDef<Payment>[] = [
             <Link href={`/paiement/${id}`}>
               <DropdownMenuItem className="cursor-pointer">
                 <Pen className="w-4 h-4 mr-2" />
-               éditer
+                éditer
               </DropdownMenuItem>
             </Link>
-            <DropdownMenuItem
-              onClick={() => handleDownloadReceipt(id)}
-              className="cursor-pointer"
-            >
-              <Download className="w-4 h-4 mr-2" />
-              Télécharger le Reçu
-            </DropdownMenuItem>
+
+            <DownloadInvoice invoice={row.original} />
           </DropdownMenuContent>
         </DropdownMenu>
       );

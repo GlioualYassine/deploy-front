@@ -1,10 +1,4 @@
-export function generateInvoiceHTML(invoice: {
-  id: string;
-  customerName: string;
-  amount: string;
-  description: string;
-  date: string;
-}) {
+export function generateInvoiceHTML(invoice: any) {
   return `
     <!DOCTYPE html>
     <html lang="en">

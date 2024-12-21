@@ -2,7 +2,7 @@
 import axiosInstance from '@/lib/axiosInstance';
 import React, { useEffect, useState } from 'react'
 import PaymentEditPage from './components/editPaiementComponent';
-import { Payment } from '../historique/components/ListHistorique/historique.types';
+import { Payment } from '../components/historique.types';
 
 const Page = (
   {

@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/select";
 import { Pagination } from "@/typs/pagination";
 import { defaultFilter } from "@/typs/filter";
+import { BaseSelectWithFetch } from "@/app/components/base/BaseSelectWithFitch";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -54,6 +55,7 @@ export function DataTable<TData, TValue>({
 
   const [isMounted, setIsMounted] = React.useState<boolean>(false);
   const [filter, setFilter] = React.useState({ ...defaultFilter });
+  const [selectedValue, setSelectedValue] = React.useState("");
 
   const handleNextPage = async () => {
     if (filter.currentPage < pagination.totalPage) {
@@ -130,14 +132,13 @@ export function DataTable<TData, TValue>({
   return (
     <div className="p-4 bg-background shadow-md rounded-lg mt-4">
       <div className="flex items-center mb-2">
-        <Input
-          placeholder="Filtrer par client"
-          value={
-            (table.getColumn("clientName")?.getFilterValue() as string) ?? ""
-          }
-          onChange={(event) =>
-            table.getColumn("clientName")?.setFilterValue(event.target.value)
-          }
+        <BaseSelectWithFetch
+          placeholder="Choisir un Client"
+          labelOption="firstName"
+          valueOption="id"
+          fetchUrl="users/clients"
+          value={selectedValue}
+          setValue={setSelectedValue}
         />
       </div>
       <div className="rounded-md border">

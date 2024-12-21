@@ -20,22 +20,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  Command,
-  CommandInput,
-  CommandList,
-  CommandItem,
-  CommandEmpty,
-} from "@/components/ui/command";
 import { Calendar } from "@/components/ui/calendar";
 import axiosInstance from "@/lib/axiosInstance";
-
+import { BaseSelectWithFetch } from "@/app/components/base/BaseSelectWithFitch";
+import { toast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
 // Define the client type based on updated User model
 interface Client {
   id: number;
@@ -61,7 +55,10 @@ interface PaymentEntryProps {
 }
 
 const PaymentEntry: React.FC<PaymentEntryProps> = ({ clients }) => {
-  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const router = useRouter(); 
+
+  const [selectedValue, setSelectedValue] = useState();
+  
   const [filterText, setFilterText] = useState<string>("");
   const [paymentDate, setPaymentDate] = useState<Date>(new Date());
 
@@ -114,19 +111,11 @@ const PaymentEntry: React.FC<PaymentEntryProps> = ({ clients }) => {
       updatedList[index].rate * (1 + updatedList[index].tva / 100);
     setDeviceList(updatedList);
   };
-  const onClientSelect = (client: Client) => {
-    handleClientSelect(client);
-  };
 
-  // Fetch client devices when a client is selected
-  const handleClientSelect = async (client: Client) => {
-    setSelectedClient(client);
-    setFilterText(`${client.firstName} ${client.lastName}`);
-
+  const handleClientSelect = async (client: any) => {
+    setSelectedValue(client);
     try {
-      const response = await axiosInstance.get(
-        `/gpsDevices/user/${client.id}`
-      );
+      const response = await axiosInstance.get(`/gpsDevices/user/${client}`);
       if (response.status === 200) {
         const devices = response.data.map((device: any) => ({
           description: device.imei, // Assuming IMEI is in the 'description' field
@@ -138,7 +127,11 @@ const PaymentEntry: React.FC<PaymentEntryProps> = ({ clients }) => {
       }
     } catch (error) {
       console.error("Error fetching client devices:", error);
-      alert("Failed to load devices for the selected client.");
+      toast({
+        title: "Error fetching devices",
+        description: "Failed to load devices for the selected client.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -163,23 +156,36 @@ const PaymentEntry: React.FC<PaymentEntryProps> = ({ clients }) => {
     setDeviceList(deviceList.map((device) => ({ ...device, tva: globalTva })));
   };
 
-  const deselectClient = () => {
-    setSelectedClient(null);
-  };
-
   const handleSubmit = async () => {
-    if (!selectedClient) {
-      alert("Veuillez sélectionner un client.");
+    if (!selectedValue) {
+      toast({
+        title: "Veuillez sélectionner un client.",
+        description: "Le client est requis pour enregistrer le paiement.",
+        variant: "destructive",
+      });
       return;
     }
 
     if (!periodFrom || !periodTo) {
-      alert("Veuillez sélectionner une période.");
+      toast({
+        title: "Veuillez sélectionner une période.",
+        description: "La période est requise pour enregistrer le paiement.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (deviceList.length === 0) {
+      toast({
+        title: "Veuillez ajouter au moins un appareil.",
+        description: "Ajoutez au moins un appareil pour enregistrer le paiement.",
+        variant: "destructive",
+      });
       return;
     }
 
     const payload = {
-      clientId: selectedClient.id,
+      clientId: selectedValue,
       devices: deviceList.map((device) => ({
         imei: device.description, // Assuming `description` is the IMEI; update if needed
         unitPrice: device.rate,
@@ -197,13 +203,26 @@ const PaymentEntry: React.FC<PaymentEntryProps> = ({ clients }) => {
     try {
       const response = await axiosInstance.post("/paiements/add", payload);
       if (response.status === 200) {
-        alert("Paiement enregistré avec succès !");
+        toast({
+          title: "Paiement enregistré avec succès.",
+          description: "Le paiement a été enregistré avec succès.",
+          variant: "default",
+        });
+        router.push("/paiement");
       } else {
-        alert("Échec de l'enregistrement du paiement.");
+        toast({
+          title: "Erreur lors de l'enregistrement du paiement.",
+          description: "Veuillez réessayer plus tard.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error("Erreur lors de l'envoi des données :", error);
-      alert("Erreur de connexion au serveur.");
+      toast({
+        title: "Erreur lors de l'enregistrement du paiement.",
+        description: "Veuillez réessayer plus tard.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -248,6 +267,16 @@ const PaymentEntry: React.FC<PaymentEntryProps> = ({ clients }) => {
           Saisie d`&apos;une facture
         </CardTitle>
         <div className=" grid grid-cols-1 md:flex gap-4 items-center mt-2">
+          <BaseSelectWithFetch
+            label="Client"
+            placeholder="Choisir un Client"
+            labelOption="firstName"
+            valueOption="id"
+            fetchUrl="users/clients"
+            value={selectedValue}
+            setValue={handleClientSelect}
+          />
+
           <div>
             <label className="text-gray-600 font-medium">
               Date de paiement
@@ -259,6 +288,7 @@ const PaymentEntry: React.FC<PaymentEntryProps> = ({ clients }) => {
               />
             </div>
           </div>
+
           <div>
             <label className="text-gray-600 font-medium">Période</label>
             <div className="grid grid-cols-1 sm:flex gap-4">
@@ -283,79 +313,6 @@ const PaymentEntry: React.FC<PaymentEntryProps> = ({ clients }) => {
         </div>
       </CardHeader>
       <CardContent>
-        {/* Client Selection and Info Section */}
-        <div className="flex gap-4 mb-4">
-          <div className="w-full">
-            <label className="text-gray-600 font-medium mb-1 block">
-              Client
-            </label>
-            <Command className="rounded-lg border shadow-md w-full">
-              <CommandInput
-                placeholder="Rechercher un client..."
-                value={filterText}
-                onValueChange={(value) => {
-                  setFilterText(value);
-                  setSelectedClient(null); // Reset selected client when input changes
-                }}
-              />
-              <ScrollArea className="h-48">
-                <CommandList>
-                  <CommandEmpty>Aucun résultat trouvé.</CommandEmpty>
-                  {clients
-                    .filter((client) =>
-                      `${client.firstName} ${client.lastName} ${
-                        client.companyName || ""
-                      }`
-                        .toLowerCase()
-                        .includes(filterText.toLowerCase())
-                    )
-                    .map((client) => (
-                      <CommandItem
-                        key={client.id}
-                        onSelect={() => {
-                          onClientSelect(client);
-                          setFilterText(
-                            `${client.firstName} ${client.lastName}`
-                          );
-                        }}
-                      >
-                        <PersonIcon className="mr-2" />
-                        <span>{`${client.firstName} ${client.lastName} (${
-                          client.companyName || "Aucune société"
-                        })`}</span>
-                      </CommandItem>
-                    ))}
-                </CommandList>
-              </ScrollArea>
-            </Command>
-          </div>
-
-          {/* Display selected client info */}
-          <Card className="w-1/3 p-4 mt-7">
-            <CardTitle className="text-md font-semibold">
-              Infos Client
-            </CardTitle>
-            {selectedClient ? (
-              <div className="mt-2 space-y-1">
-                <p>
-                  <strong>Nom:</strong> {selectedClient.firstName}{" "}
-                  {selectedClient.lastName}
-                </p>
-                <p>
-                  <strong>Email:</strong> {selectedClient.email}
-                </p>
-                <p>
-                  <strong>Entreprise:</strong>{" "}
-                  {selectedClient.companyName || "Non spécifiée"}
-                </p>
-              </div>
-            ) : (
-              <div className="mt-2 text-gray-500">Aucun client sélectionné</div>
-            )}
-          </Card>
-        </div>
-
-        {/* Global TVA Application */}
         <div className="mb-4 grid grid-cols-1 md:flex items-center gap-4 mt-12">
           <label className="text-gray-600 font-medium">TVA Globale (%)</label>
           <Input
@@ -464,7 +421,9 @@ const PaymentEntry: React.FC<PaymentEntryProps> = ({ clients }) => {
             />
           </div>
           <div className="flex justify-between items-center">
-            <label className="text-gray-600 font-medium">Ajustement (DHS)</label>
+            <label className="text-gray-600 font-medium">
+              Ajustement (DHS)
+            </label>
             <Input
               type="number"
               value={adjustment}
