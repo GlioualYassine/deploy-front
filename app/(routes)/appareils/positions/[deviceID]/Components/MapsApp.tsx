@@ -1,210 +1,218 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import { Icon } from "leaflet";
-import eventsData from "../historyEvents";
-import FlyToMarker from "./FyToMarker";
-import Filter from "./Filter";
-import { MapPin } from "lucide-react";
+
+import React, { useState, useEffect, useRef } from "react";
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import { Card } from "@/components/ui/card";
-import axiosInstance from "@/lib/axiosInstance";
+import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { useFetch } from "@/servises/useFetch";
-import { Pagination } from "@/typs/pagination";
 import { defaultFilter } from "@/typs/filter";
+import { FiMapPin, FiClock, FiTrendingUp } from "react-icons/fi";
 
-const tags = Array.from({ length: 50 }).map(
-  (_, i, a) => `v1.2.0-beta.${a.length - i}`
-);
-
-export interface HistoricalEvent {
-  id: number;
-  title: string;
-  position: [number, number];
-  category: string;
-  timestamp: string;
-}
 export interface Historique {
   id: number;
-  imei: string;
   latitude: string;
   longitude: string;
-  timestamp : any
+  speed: string;
+  imei: string;
+  timestamp: string;
 }
 
-const defaultPosition: [number, number] = [
-  35.76185321080379, -5.836189754217148,
-];
+const defaultPosition = { lat: 35.76185321080379, lng: -5.836189754217148 };
 
-const emptyStar = <i className="fa-regular fa-star"></i>;
-const fullStar = (
-  <i
-    className="fa-solid fa-star"
-    style={{
-      color: "#fdc401",
-    }}
-  ></i>
-);
+const containerStyle = {
+  width: "100%",
+  height: "100%",
+};
 
 function MapsApp({ imei }: { imei: string }) {
-  const icon: Icon = new Icon({
-    iconUrl: "/marker.svg",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-  });
-
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [activeEvent, setActiveEvent] = useState<Historique | null>(null);
   const [historyEvents, setHistoryEvents] = useState<Historique[]>([]);
-  const [favourites, setFavourites] = useState<number[]>(() => {
-    const savedFavorites = localStorage.getItem("favourites");
-    return savedFavorites ? JSON.parse(savedFavorites) : [];
-  });
+  const [activeEvent, setActiveEvent] = useState<Historique | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const mapRef = useRef<google.maps.Map | null>(null);
 
+  const { fetchAll } = useFetch(`positions/${imei}`);
+  const [filter, setFilter] = useState({ ...defaultFilter, size: 10 });
 
-  const [filter, setFilter] = useState({ ...defaultFilter });
-  const [pagination, setPagination] = useState<Pagination>();
-
-
-  const handleFavouriteClick = (eventId: number) => {
-    let updatedFavourites = favourites.filter((id) => id !== eventId);
-
-    if (!favourites.includes(eventId)) {
-      updatedFavourites = [eventId, ...updatedFavourites];
-    }
-
-    setFavourites(updatedFavourites);
-    localStorage.setItem("favourites", JSON.stringify(updatedFavourites));
-  };
-
-  const handleListItemClick = (eventId: number) => {
-    const event = historyEvents.find((event) => event.id === eventId);
-    if (event) {
-      setActiveEvent(event);
-    }
-  };
-
-const { fetchAll } = useFetch(`positions/${imei}`);
-
-  /// FETCHIN DATA
   useEffect(() => {
-    // Appeler fitchData une fois dès le chargement du composant
-    fitchData(filter);
+    fetchData(currentPage);
+  }, [currentPage]);
 
-    // // Répéter l'appel toutes les 10 secondes (10000 ms)
-    // const intervalId = setInterval(() => {
-    //   fitchData();
-    // }, 10000);
-
-    // Nettoyer l'intervalle à la destruction du composant pour éviter les fuites de mémoire
-    // return () => clearInterval(intervalId);
-  }, []);
-
-  const fitchData = async (baseFilter: any) => {
+  const fetchData = async (page: number) => {
+    console.log("Fetching data for page:", page);
     try {
-      const response = await fetchAll(baseFilter);
-      setPagination(response.pagination);
-      console.log("response", response.data);
-
-      setHistoryEvents(response.data);
+      const response = await fetchAll({ ...filter, currentPage: page });
+      console.log("API response:", response);
+      if (response && response.data) {
+        setHistoryEvents(response.data);
+        setTotalPages(response.pagination?.totalPage || 1);
+      }
     } catch (error) {
-      console.error("Erreur lors de la récupération des voitures :", error);
+      console.error("Erreur lors de la récupération des historiques :", error);
+    }
+  };
+
+  const getIndicatorStyle = (speed: string) => {
+    return speed === "0"
+      ? "bg-red-500 w-4 h-4 rounded-full"
+      : "bg-green-500 w-4 h-4 rounded-full";
+  };
+
+  const flyToMarker = (position: google.maps.LatLngLiteral) => {
+    if (mapRef.current) {
+      mapRef.current.panTo(position);
+      mapRef.current.setZoom(15);
+    } else {
+      console.error("Map reference is not initialized");
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      console.log("Next page:", currentPage + 1);
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      console.log("Previous page:", currentPage - 1);
+      setCurrentPage(currentPage - 1);
     }
   };
 
   return (
-    <div className="flex flex-col md:flex-row gap-2  w-full h-full">
-      <ScrollArea className="h-[80vh] w-72 border rounded-lg overflow-hidden shadow-md">
-        <div className="p-4">
-          <h4 className="mb-4 text-sm font-medium text-gray-600 leading-none">
-            Les Historiques
-          </h4>
-          {historyEvents.map((tag: any) => (
-            <Card
-              key={tag.id}
-              className="p-4 mb-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
-              onClick={() => handleListItemClick(tag.id)}
-            >
-              <div className="flex flex-col space-y-2">
-                <div className="text-sm text-gray-700 font-semibold">
-                  {tag.imei}
-                </div>
-                <div className="text-xs text-gray-500">
-                  {/* Formater la date pour qu'elle soit plus lisible */}
-                  {tag.timestamp
-                    ? format(new Date(tag.timestamp), "dd MMM yyyy, HH:mm:ss")
-                    : "Date non disponible"}
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </ScrollArea>
-
-      {/* Left Section: Map */}
-      <div className="flex flex-col gap-2 w-full  h-[80vh]">
-        {/* <Filter setSelectedCategory={setSelectedCategory} /> */}
-        <MapContainer
-          center={defaultPosition}
-          zoom={13}
-          className="w-full h-full relative rounded-lg border-2 border-gray-300 shadow-lg"
-        >
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          {historyEvents
-            .filter(
-              (event) => !selectedCategory || event.imei === selectedCategory
-            )
-            .map((event) => (
+    <div className="flex flex-col gap-4 w-full h-full md:flex-row">
+      {/* Map Section */}
+      <div className="flex-grow h-[50vh] md:h-full relative">
+        <LoadScript googleMapsApiKey="AIzaSyBUT26jLFeeWY8o95fI7LNNb7Fgl-nXpHk">
+          <GoogleMap
+            mapContainerStyle={containerStyle}
+            center={defaultPosition}
+            zoom={13}
+            onLoad={(map) => {
+              mapRef.current = map;
+            }}
+          >
+            {historyEvents.map((event) => (
               <Marker
                 key={event.id}
-                position={[
-                  parseFloat(event.latitude),
-                  parseFloat(event.longitude),
-                ]}
-                icon={icon}
-                eventHandlers={{
-                  click: () => {
-                    setActiveEvent(event);
-                  },
+                position={{
+                  lat: parseFloat(event.latitude),
+                  lng: parseFloat(event.longitude),
+                }}
+                onClick={() => {
+                  setActiveEvent(event);
+                  flyToMarker({
+                    lat: parseFloat(event.latitude),
+                    lng: parseFloat(event.longitude),
+                  });
                 }}
               />
             ))}
-          {activeEvent && (
-            <Popup
-            className=" !bg-white rounded-lg"
-            position={[
-              parseFloat(activeEvent.latitude),
-              parseFloat(activeEvent.longitude),
-            ]}
-            closeOnClick={false}
+          </GoogleMap>
+        </LoadScript>
+
+        {activeEvent && (
+          <div
+            className="absolute bg-white p-4 rounded-lg shadow-md border top-16 left-1/2 transform -translate-x-1/2"
+            style={{ maxWidth: "300px" }}
           >
-            <div className="">
-              {/* Titre avec un style soigné */}
-              <h2 className="font-bold text-xl text-blue-600 mb-3 truncate">
-                {activeEvent.imei}
-              </h2>
-              {/* Affichage de la date de manière lisible */}
-              <p className="text-gray-700 text-sm mb-4">
-                {/* Formater la date pour la rendre lisible */}
-                {activeEvent.timestamp
-                  ? format(new Date(activeEvent.timestamp), 'dd MMM yyyy, HH:mm:ss')
-                  : 'Date non disponible'}
-              </p>
-            
+            <h3 className="font-semibold text-lg text-blue-500 mb-2">
+              <FiMapPin className="inline mr-2" /> {activeEvent.imei}
+            </h3>
+            <p className="text-sm text-gray-600 mb-1">
+              <FiClock className="inline mr-2" />{" "}
+              {format(new Date(activeEvent.timestamp), "dd MMM yyyy, HH:mm:ss")}
+            </p>
+            <div className="flex items-center space-x-2">
+              <FiTrendingUp className="inline text-gray-700" />
+              <div className="flex items-center space-x-2">
+                <span className={getIndicatorStyle(activeEvent.speed)}></span>
+                <span>
+                  {activeEvent.speed === "0"
+                    ? "Arrêt"
+                    : `${activeEvent.speed} km/h`}
+                </span>
+              </div>
             </div>
-          </Popup>
-          )}
-          {activeEvent && (
-            <FlyToMarker
-              position={[activeEvent.latitude, activeEvent.longitude]}
-              zoomLevel={15}
-            />
-          )}
-        </MapContainer>
+          </div>
+        )}
       </div>
+
+     {/* History Section */}
+<div className="w-full h-[50vh] md:h-full border-t md:border-t-0 md:w-1/3 flex flex-col">
+  <ScrollArea className="flex-grow h-full overflow-auto">
+    <div className="p-4">
+      <h4 className="mb-4 text-sm font-medium text-gray-600">
+        Les Historiques
+      </h4>
+      {historyEvents.map((event, index) => (
+        <Card
+          key={event.id}
+          className={`p-4 mb-4 ${
+            index === 0 ? "bg-blue-100" : "bg-gray-50"
+          } rounded-lg shadow hover:shadow-lg transition-shadow`}
+          onClick={() => {
+            setActiveEvent(event);
+            flyToMarker({
+              lat: parseFloat(event.latitude),
+              lng: parseFloat(event.longitude),
+            });
+          }}
+        >
+          <div className="flex flex-col space-y-2">
+            <div className="text-sm font-semibold text-gray-800">
+              <FiMapPin className="inline mr-2" /> IMEI: {event.imei}
+            </div>
+            <div className="text-xs text-gray-500">
+              <FiClock className="inline mr-2" />{" "}
+              {format(
+                new Date(event.timestamp),
+                "dd MMM yyyy, HH:mm:ss"
+              )}
+            </div>
+            <div className="flex items-center space-x-2">
+              <FiTrendingUp className="inline text-gray-700" />
+              <div className="flex items-center space-x-2">
+                <span className={getIndicatorStyle(event.speed)}></span>
+                <span>
+                  {event.speed === "0"
+                    ? "Arrêt"
+                    : `${event.speed} km/h`}
+                </span>
+              </div>
+            </div>
+          </div>
+        </Card>
+      ))}
+    </div>
+  </ScrollArea>
+
+  {/* Pagination */}
+  <div className="sticky bottom-0 bg-white border-t p-4 flex justify-between items-center">
+    <Button
+      disabled={currentPage === 1}
+      onClick={handlePreviousPage}
+      className="px-4 py-2"
+    >
+      Précédent
+    </Button>
+    <span className="text-sm text-gray-600">
+      Page {currentPage} sur {totalPages}
+    </span>
+    <Button
+      disabled={currentPage === totalPages}
+      onClick={handleNextPage}
+      className="px-4 py-2"
+    >
+      Suivant
+    </Button>
+  </div>
+</div>
+
     </div>
   );
 }
