@@ -25,7 +25,8 @@ interface BaseSelectWithFetchProps {
   placeholder?: string;
   labelOption?: string;
   valueOption?: string;
-  fetchUrl: string;
+  fetchUrl?: string;
+  data?: any;
   value: any;
   setValue: (value: any) => void;
 }
@@ -37,6 +38,7 @@ export function BaseSelectWithFetch({
   valueOption = "id",
   fetchUrl,
   value,
+  data = [],
   setValue,
 }: BaseSelectWithFetchProps) {
   const [open, setOpen] = React.useState(false);
@@ -47,7 +49,12 @@ export function BaseSelectWithFetch({
   React.useEffect(() => {
     async function fetchData() {
       try {
-        if (!fetchUrl || fetchUrl === "") return;
+        if (!fetchUrl || fetchUrl === "") {
+          if (data?.length > 0) {
+            setOptions(data);
+          }
+          return;
+        }
         const response = await axiosInstance.get(fetchUrl);
         setOptions(response.data);
       } catch (error) {

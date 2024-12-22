@@ -13,30 +13,96 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
-    Table,
+  Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Pagination } from "@/typs/pagination";
+import { defaultFilter } from "@/typs/filter";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  pagination: Pagination;
+  fetch: (filter: any) => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  pagination,
+  fetch,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] =
-    React.useState<ColumnFiltersState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
 
   const [isMounted, setIsMounted] = React.useState<boolean>(false);
+  const [filter, setFilter] = React.useState({ ...defaultFilter });
+  const [selectedValue, setSelectedValue] = React.useState("");
+
+  const handleNextPage = async () => {
+    if (filter.currentPage < pagination.totalPage) {
+      await fetch({
+        ...filter,
+        currentPage: filter.currentPage + 1,
+      });
+
+      setFilter({
+        ...filter,
+        currentPage: filter.currentPage + 1,
+      });
+    }
+  };
+
+  const handlePreviousPage = async () => {
+    if (filter.currentPage > 1) {
+      await fetch({
+        ...filter,
+        currentPage: filter.currentPage - 1,
+      });
+      setFilter({
+        ...filter,
+        currentPage: filter.currentPage - 1,
+      });
+    }
+  };
+
+  const changesize = async (size: any) => {
+    await fetch({
+      ...filter,
+      size: size,
+    });
+    setFilter({
+      ...filter,
+      size: size,
+    });
+  };
+
+  const handleFilter = async (value: string) => {
+    await fetch({
+      ...filter,
+      globalSearch: value,
+    });
+    setFilter({
+      ...filter,
+      globalSearch: value,
+    });
+  };
 
   React.useEffect(() => {
     setIsMounted(true);
@@ -62,7 +128,7 @@ export function DataTable<TData, TValue>({
   }
 
   return (
-    <div>
+    <div >
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -112,11 +178,26 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
+        <Select onValueChange={(value) => changesize(value)}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder={filter.size} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="5">5</SelectItem>
+              <SelectItem value="10">10</SelectItem>
+              <SelectItem value="25">25</SelectItem>
+              <SelectItem value="50">50</SelectItem>
+              <SelectItem value="100">100</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+
         <Button
           variant="outline"
           size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
+          onClick={() => handlePreviousPage()}
+          disabled={filter.currentPage === 1}
         >
           Previous
         </Button>
@@ -124,8 +205,8 @@ export function DataTable<TData, TValue>({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
+          onClick={() => handleNextPage()}
+          disabled={filter.currentPage === pagination?.totalPage}
         >
           Next
         </Button>

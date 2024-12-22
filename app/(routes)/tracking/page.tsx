@@ -30,9 +30,21 @@ const Page = () => {
   const [urlApapreil, setUrlApapreil] = useState("");
 
   const markers = [
-    { id: 1, name: "Marker 1", position: [35.7632743,-5.8344698] as [number, number] },
-    { id: 2, name: "Marker 2", position: [35.7632743,-5.78] as [number, number] },
-    { id: 3, name: "Marker 3", position: [35.7632743,-5.8] as [number, number] },
+    {
+      id: 1,
+      name: "Marker 1",
+      position: [35.7632743, -5.8344698] as [number, number],
+    },
+    {
+      id: 2,
+      name: "Marker 2",
+      position: [35.7632743, -5.78] as [number, number],
+    },
+    {
+      id: 3,
+      name: "Marker 3",
+      position: [35.7632743, -5.8] as [number, number],
+    },
   ];
 
   useEffect(() => {}, []);
@@ -42,8 +54,8 @@ const Page = () => {
     setUrlApapreil(`/gpsDevices/user/${data}`);
   };
   return (
-    <div>
-      <div className="flex gap-4 items-center mt-0 mb-4 z-50">
+    <div className="p-4 bg-background shadow-md rounded-lg mt-4">
+      <div className="flex gap-4 items-center mt-0 mb-4 z-50 border-b pb-4">
         <BaseSelectWithFetch
           placeholder="Choisir un Client"
           labelOption="firstName"
@@ -74,7 +86,7 @@ const Page = () => {
 
       <div className="flex flex-col gap-2 w-full h-[80vh] relative">
         <MapContainer
-          center={[35.7632743,-5.8344698]}
+          center={[35.7632743, -5.8344698]}
           zoom={10}
           style={{ height: "100vh", width: "100%", zIndex: 0 }}
         >

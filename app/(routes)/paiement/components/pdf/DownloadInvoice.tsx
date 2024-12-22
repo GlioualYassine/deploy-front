@@ -3,6 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { generateInvoiceHTML } from "./InvoiceTemplate";
 import html2pdf from "html2pdf.js";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { Download } from "lucide-react";
 
 export default function DownloadInvoice({ invoice }: { invoice: any }) {
   const handleDownload = () => {
@@ -21,5 +23,10 @@ export default function DownloadInvoice({ invoice }: { invoice: any }) {
       .save();
   };
 
-  return <Button onClick={handleDownload}>Download Invoice (HTML)</Button>;
+  return (
+    <DropdownMenuItem className="cursor-pointer" onClick={handleDownload}>
+      <Download className="h-4 w-4 mr-2" />
+      Telecharger la facture
+    </DropdownMenuItem>
+  );
 }
