@@ -9,14 +9,26 @@ import { Pagination } from "@/typs/pagination";
 import { DataTable } from "./components/data-table";
 import { columns } from "./components/columns";
 import { BaseSelectWithFetch } from "@/app/components/base/BaseSelectWithFitch";
+import { BaseRangeDate } from "@/app/components/base/BaseRangeDate";
+import { DateRange } from "react-day-picker";
+import { addDays, format } from "date-fns";
 
-const Page = () => {
-  const { fetchAll } = useFetch("rapports");
+const Page = ({
+  params,
+}: {
+  params: {
+    imei: string;
+  };
+}) => {
+  const { fetchAll } = useFetch(`rapports/${params.imei}`);
 
   const [rapports, setRapports] = useState<any[]>([]);
   const [filter, setFilter] = useState({ ...defaultFilter });
   const [pagination, setPagination] = useState<Pagination>();
-  const [selectedValue, setSelectedValue] = useState();
+  const [selectedValue, setSelectedValue] = useState<DateRange>({
+    from: undefined,
+    to: undefined,
+  });
 
   useEffect(() => {
     fetchRapports(filter);
@@ -30,7 +42,27 @@ const Page = () => {
 
   const changeValue = (value: any) => {
     setSelectedValue(value);
-    fetchRapports({ ...filter, clientId: value });
+    if (
+      !value?.from ||
+      !value?.to ||
+      value?.from == undefined ||
+      value?.to == undefined ||
+      !value
+    ) {
+      fetchRapports({
+        ...filter,
+        startDate: null,
+        endDate: null,
+      });
+    } else {
+      const startDate = format(value.from, "yyyy-MM-dd");
+      const endDate = format(value.to, "yyyy-MM-dd");
+      fetchRapports({
+        ...filter,
+        startDate: startDate,
+        endDate: endDate,
+      });
+    }
   };
 
   return (
@@ -40,11 +72,8 @@ const Page = () => {
       </div>
       <div className="p-4 bg-background shadow-md rounded-lg mt-4">
         <div className="flex items-center mb-2">
-          <BaseSelectWithFetch
-            placeholder="Choisir un Client"
-            labelOption="firstName"
-            valueOption="id"
-            fetchUrl="users/clients"
+          <BaseRangeDate
+            placeholder="Choisir un date"
             value={selectedValue}
             setValue={changeValue}
           />

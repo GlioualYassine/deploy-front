@@ -55,7 +55,7 @@ export function DataTable<TData, TValue>({
 
   const [isMounted, setIsMounted] = React.useState<boolean>(false);
   const [filter, setFilter] = React.useState({ ...defaultFilter });
-  const [selectedValue, setSelectedValue] = React.useState("");
+  const [selectedValue, setSelectedValue] = React.useState(null);
 
   const handleNextPage = async () => {
     if (filter.currentPage < pagination.totalPage) {
@@ -129,6 +129,15 @@ export function DataTable<TData, TValue>({
     return null;
   }
 
+  const changeClient = async (value: any) => {
+    await fetch({
+      ...filter,
+      clientId: value,
+    });
+    setSelectedValue(value);
+   
+  }
+
   return (
     <div className="p-4 bg-background shadow-md rounded-lg mt-4">
       <div className="flex items-center mb-2">
@@ -138,7 +147,7 @@ export function DataTable<TData, TValue>({
           valueOption="id"
           fetchUrl="users/clients"
           value={selectedValue}
-          setValue={setSelectedValue}
+          setValue={changeClient}
         />
       </div>
       <div className="rounded-md border">

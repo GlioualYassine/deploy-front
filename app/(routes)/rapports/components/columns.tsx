@@ -1,5 +1,12 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal, Eye, Download, Pen } from "lucide-react";
+import {
+  ArrowUpDown,
+  MoreHorizontal,
+  Eye,
+  Download,
+  Pen,
+  EyeIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -24,9 +31,18 @@ export const columns: ColumnDef<any>[] = [
         <ArrowUpDown className="mh-2 h-4 ml-2" />
       </Button>
     ),
-    cell: ({ row }) => (
-      <div className="text-center font-medium">{row.getValue("imei")}</div>
-    ),
+    cell: ({ row }) => {
+      const imei = row.original?.imei || "";
+      const nom = row.original?.nom || "";
+      return (
+        <div className="text-center font-medium text-xs">
+          {nom}
+          <div className="text-center text-xs  text-muted-foreground">
+            {imei}
+          </div>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "clientName",
@@ -40,8 +56,11 @@ export const columns: ColumnDef<any>[] = [
       </Button>
     ),
     cell: ({ row }) => {
-      const clientName: string = row.getValue("clientName");
-      return <div className="text-center font-medium">{clientName}</div>;
+      const firstName = row.original?.user?.firstName || "";
+      const lastName = row.original?.user?.lastName || "";
+      return (
+        <div className="text-center font-medium text-xs">{`${firstName} ${lastName}`}</div>
+      );
     },
   },
   {
@@ -56,12 +75,13 @@ export const columns: ColumnDef<any>[] = [
       </Button>
     ),
     cell: ({ row }) => {
+      const vitesse = row.original?.topVitesse || 0;
       return (
-        <div className="text-center font-medium">{row.getValue("iitesse")}</div>
+        <div className="text-center font-medium text-xs">{vitesse} Km/h</div>
       );
     },
   },
- 
+
   {
     accessorKey: "distance",
     header: ({ column }) => (
@@ -75,12 +95,8 @@ export const columns: ColumnDef<any>[] = [
     ),
     cell: ({ row }) => {
       return (
-        <div className="text-center font-medium">
-          <Badge
-            className={`border px-2 py-1 rounded bg-transparent hover:bg-transparent`}
-          >
-            {row.getValue("address")}
-          </Badge>
+        <div className="text-center font-medium text-xs">
+          {(row.getValue("distance") as number)?.toFixed(2)} Km
         </div>
       );
     },
@@ -98,20 +114,26 @@ export const columns: ColumnDef<any>[] = [
       </Button>
     ),
     cell: ({ row }) => {
-      const date: Date = row.getValue("datePaiement");
+      const date: Date = row.original?.dateCreation;
       return (
-        <div className="text-center font-medium">
-          {format(date, "dd/MM/yyyy")}
+        <div className="text-center font-medium text-xs">
+          {format(date, "dd-MM-yyyy")}
         </div>
       );
     },
   },
-  
+
   {
     accessorKey: "actions",
     header: "Actions",
     cell: ({ row }) => {
-      return <div></div>;
+      return (
+        <div>
+          <Link href={`/rapports/${row.original.imei}`}>
+            <EyeIcon className="h-4 w-4 " />
+          </Link>
+        </div>
+      );
     },
   },
 ];

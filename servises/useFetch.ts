@@ -14,6 +14,9 @@ type Filter = {
   globalSearch?: string;
   size?: number;
   currentPage?: number;
+  clientId?: number;
+  endDate?: string;
+  startDate?: string;
 };
 
 type ApiResponse<T> = {
@@ -28,6 +31,11 @@ export function useFetch<T>(url: string) {
     if (filter.size) params.append("size", String(filter.size ?? 10));
     if (filter.currentPage ?? 1)
       params.append("currentPage", String(filter.currentPage));
+    if(filter.clientId) params.append("clientId", String(filter.clientId));
+    if(filter.startDate) params.append("startDate", filter.startDate);
+    if(filter.endDate) params.append("endDate", filter.endDate);
+
+
 
     return params.toString();
   }
