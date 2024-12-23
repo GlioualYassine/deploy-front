@@ -15,7 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-    Table,
+  Table,
   TableBody,
   TableCell,
   TableHead,
@@ -32,11 +32,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { defaultFilter } from "@/typs/filter";
+import { BaseSelectWithFetch } from "@/app/components/base/BaseSelectWithFitch";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  fetch : (baseFilter: any) => void;
+  fetch: (baseFilter: any) => void;
   pagination: any;
 }
 
@@ -47,11 +48,13 @@ export function DataTable<TData, TValue>({
   pagination,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] =
-    React.useState<ColumnFiltersState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
 
   const [isMounted, setIsMounted] = React.useState<boolean>(false);
-  
+  const [selectedValue, setSelectedValue] = React.useState();
+
   const [filter, setFilter] = React.useState({ ...defaultFilter });
 
   const handleNextPage = async () => {
@@ -103,7 +106,6 @@ export function DataTable<TData, TValue>({
     });
   };
 
-
   React.useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -120,6 +122,10 @@ export function DataTable<TData, TValue>({
     state: {
       sorting,
       columnFilters,
+      pagination: {
+        pageIndex: filter.currentPage - 1,
+        pageSize: filter.size,
+      },
     },
   });
 
@@ -127,15 +133,28 @@ export function DataTable<TData, TValue>({
     return null;
   }
 
+  const changeValue = async (value: any) => {
+    setSelectedValue(value);
+    await fetch({ ...filter, clientId: value });
+  };
+
   return (
     <div className="p-4 bg-background shadow-md rounded-lg mt-4">
       <div className="flex items-center mb-2">
-        <Input
+        {/* <Input
           placeholder="Filtrer par marque de voiture"
           value={(table.getColumn("marque")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("marque")?.setFilterValue(event.target.value)
           }
+        /> */}
+        <BaseSelectWithFetch
+          placeholder="Choisir un Client"
+          labelOption="firstName"
+          valueOption="id"
+          fetchUrl="users/clients"
+          value={selectedValue}
+          setValue={changeValue}
         />
       </div>
       <div className="rounded-md border">
@@ -186,16 +205,17 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-between space-x-2 py-4">
+      <div className="flex items-center justify-between space-x-2 ">
         <div>
           <span className="text-sm text-muted-foreground">
-            Showing {pagination?.offsetElements == 0 ? 1 : pagination?.offsetElements} -{" "}
+            Showing{" "}
+            {pagination?.offsetElements == 0 ? 1 : pagination?.offsetElements} -{" "}
             {(pagination?.numberOfElements ?? 0) +
               (pagination?.offsetElements ?? 0)}{" "}
             of {pagination?.totalElements} results
           </span>
         </div>
-        <div className="flex items-center justify-end space-x-2 py-4">
+        <div className="flex items-center justify-end space-x-2 py-2">
           <Select onValueChange={(value) => changesize(value)}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder={filter.size} />

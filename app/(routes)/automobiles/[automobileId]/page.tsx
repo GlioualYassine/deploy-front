@@ -27,7 +27,6 @@ const AutomobileIdPage = ({ params }: { params: { automobileId: string } }) => {
   if (!voiture) {
     return (
       <div>
-        <Header />
         <Skeleton className=" w-[100px] h-[20px] rounded-full" />{" "}
         {/* Utilisation d'un skeleton ici */}
       </div>

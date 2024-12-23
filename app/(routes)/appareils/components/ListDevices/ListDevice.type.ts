@@ -2,6 +2,8 @@ export type User = {
   id: number;
   firstname: string;
   lastname: string;
+  firstName?:string;
+  lastName?:string;
   email: string;
   companyId: number;
   role: string;
@@ -10,6 +12,7 @@ export type User = {
 export type Device = {
   id: string;
   imei: string;
+  user? : User;
   nom: string;
   serverType: string;
   description: string;

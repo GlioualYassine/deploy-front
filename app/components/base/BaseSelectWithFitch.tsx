@@ -90,7 +90,7 @@ export function BaseSelectWithFetch({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-[200px] justify-between"
+            className="w-full min-w-[200px]  justify-between"
           >
             {value
               ? options.find(
@@ -100,7 +100,7 @@ export function BaseSelectWithFetch({
             <ChevronsUpDown className="opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[200px] p-0">
+        <PopoverContent className="w-full p-0">
           <Command>
             <CommandInput
               placeholder="Search..."

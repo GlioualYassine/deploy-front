@@ -178,7 +178,7 @@ const Page = () => {
             </Marker>
           ))}
 
-          {newMarkers && (
+          {newMarkers && newMarkers?.lastPosition && newMarkers?.lastPosition != undefined  && (
             <FlyToMarker
               position={[
                 newMarkers?.lastPosition?.latitude,

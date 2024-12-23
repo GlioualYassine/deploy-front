@@ -4,6 +4,10 @@ import { ColumnDef } from "@tanstack/react-table";
 import {
   ArrowUpDown,
   BellDot,
+  Locate,
+  LocateIcon,
+  MapPin,
+  MapIcon,
   MoreHorizontal,
   Pencil,
   Trash,
@@ -63,17 +67,20 @@ const ActionCell = ({ divice }: { divice: Device }) => {
     <div className="flex gap-1 justify-center items-center">
       {/* Bouton pour éditer */}
       <Link href={`appareils/${divice.id}`}>
-        <Button className="flex gap-1 justify-center items-center dark:bg-slate-700 text-white bg-sky-950">
-          <Pencil className="w-4 h-4" />
-        </Button>
+        <button className=" bg-green-100 p-2 rounded-full">
+          <Pencil className="w-3 h-3 text-green-600 " />
+        </button>
       </Link>
 
       {/* Bouton pour supprimer */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger>
-          <Button variant="destructive" onClick={() => setIsOpen(true)}>
-            <Trash className="w-4 h-4" />
-          </Button>
+          <button
+            className=" bg-red-100 p-2 rounded-full"
+            onClick={() => setIsOpen(true)}
+          >
+            <Trash className="w-3 h-3 text-red-500" />
+          </button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -94,16 +101,16 @@ const ActionCell = ({ divice }: { divice: Device }) => {
       </Dialog>
       {/* Nouveau bouton pour l'historique des positions */}
       <Link href={`appareils/positions/${divice.imei}`}>
-        <Button className="flex gap-1 justify-center items-center dark:bg-[#4b5563] text-white bg-[#16a34a]">
-          <Eye className="w-4 h-4" />
-        </Button>
+        <button className=" bg-amber-100 p-2 rounded-full">
+          <MapPin className="w-3 h-3 text-amber-500" />
+        </button>
       </Link>
 
       {/* Bouton pour afficher les notifications */}
       <Link href={`appareils/notifications/${divice.id}`}>
-        <Button className="flex gap-1 justify-center items-center dark:bg-[#84385f] text-white bg-[#60a5fa]">
-          <BellDot className="w-4 h-4" />
-        </Button>
+        <button className=" bg-sky-100 p-2 rounded-full">
+          <BellDot className="w-3 h-3 text-sky-600" />
+        </button>
       </Link>
     </div>
   );
@@ -125,7 +132,12 @@ export const columns: ColumnDef<Device>[] = [
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="text-center font-medium">{row.getValue("imei")}</div>
+      <div className="text-center font-medium text-xs">
+        {row.getValue("nom")}
+        <div className="text-center text-xs  text-muted-foreground">
+          {row.getValue("imei")}
+        </div>
+      </div>
     ),
   },
   {
@@ -135,13 +147,20 @@ export const columns: ColumnDef<Device>[] = [
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
-        Nom
+        Nom de client
         <ArrowUpDown className="mh-2 h-4 ml-2" />
       </Button>
     ),
-    cell: ({ row }) => (
-      <div className="text-center font-medium">{row.getValue("nom")}</div>
-    ),
+    cell: ({ row }) => {
+      const firstName = row?.original?.user?.firstName;
+      const lastName = row?.original?.user?.lastName;
+
+      return (
+        <div className="text-center font-medium text-xs">
+          {firstName} {lastName}
+        </div>
+      );
+    },
   },
 
   {
@@ -156,13 +175,13 @@ export const columns: ColumnDef<Device>[] = [
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="text-center font-medium">
+      <div className="text-center font-medium text-xs">
         {row.getValue("deviceConnected") ? (
-          <span className="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800">
+          <span className="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium text-xs bg-green-100 text-green-800">
             Connecté
           </span>
         ) : (
-          <span className="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-red-100 text-red-800">
+          <span className="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium text-xs bg-red-100 text-red-800">
             Déconnecté
           </span>
         )}
@@ -181,7 +200,7 @@ export const columns: ColumnDef<Device>[] = [
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="text-center font-medium">
+      <div className="text-center font-medium text-xs">
         {row.getValue("serverType")}
       </div>
     ),
@@ -190,7 +209,7 @@ export const columns: ColumnDef<Device>[] = [
     accessorKey: "description",
     header: "Description",
     cell: ({ row }) => (
-      <div className="text-center font-medium">
+      <div className="text-center font-medium text-xs">
         {row.getValue("description")}
       </div>
     ),
@@ -217,21 +236,23 @@ export const columns: ColumnDef<Device>[] = [
   //   ),
   // },
 
-  {
-    accessorKey: "marque",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Voiture
-        <ArrowUpDown className="mh-2 h-4 ml-2" />
-      </Button>
-    ),
-    cell: ({ row }) => (
-      <div className="text-center font-medium">{row.getValue("marque")}</div>
-    ),
-  },
+  // {
+  //   accessorKey: "voitureNom",
+  //   header: ({ column }) => (
+  //     <Button
+  //       variant="ghost"
+  //       onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+  //     >
+  //       Voiture
+  //       <ArrowUpDown className="mh-2 h-4 ml-2" />
+  //     </Button>
+  //   ),
+  //   cell: ({ row }) => (
+  //     <div className="text-center font-medium text-xs">
+  //       {row.getValue("voitureNom")}
+  //     </div>
+  //   ),
+  // },
   {
     accessorKey: "actions",
     header: () => <div className="text-center">Actions</div>,

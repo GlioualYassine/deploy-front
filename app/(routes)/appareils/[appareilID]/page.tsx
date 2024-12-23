@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import Header from "./components/Header/Header";
 import AppareilInfrormation from "./components/AppareilInformation/AppareilInformation";
 import { Appareil } from "@/app/(routes)/appareils/[appareilID]/components/AppareilInformation/AppareilInformation.types";
 import axios from "axios";
@@ -29,7 +28,6 @@ const AutomobileIdPage = ({ params }: { params: { appareilID: string } }) => {
   if (!appareil) {
     return (
       <div>
-        <Header />
         <Skeleton className=" w-[100px] h-[20px] rounded-full" />
         {/* Utilisation d'un skeleton ici */}
       </div>

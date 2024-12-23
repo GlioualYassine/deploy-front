@@ -113,21 +113,8 @@ const ActionCell = ({ id }: { id: number }) => {
 };
 
 export const columns: ColumnDef<User>[] = [
-  {
-    accessorKey: "id",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          ID Client
-          <ArrowUpDown className="mh-2 h-4 ml-2" />
-        </Button>
-      );
-    },
-  },
-  {
+  
+{
     accessorKey: "firstName",
     header: ({ column }) => {
       return (
@@ -135,10 +122,14 @@ export const columns: ColumnDef<User>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Prénom Client
+          Prénom
           <ArrowUpDown className="mh-2 h-4 ml-2" />
         </Button>
       );
+    },
+    cell: ({ row }) => {
+      const firstName: String = row.original?.firstName;
+      return <div className="text-start ml-4 font-medium text-xs">{firstName}</div>;
     },
   },
   {
@@ -149,10 +140,14 @@ export const columns: ColumnDef<User>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Nom Client
+          Nom
           <ArrowUpDown className="mh-2 h-4 ml-2" />
         </Button>
       );
+    },
+    cell: ({ row }) => {
+      const lastName: String = row.original?.lastName;
+      return <div className="text-start ml-4 font-medium text-xs">{lastName}</div>;
     },
   },
   {
@@ -163,10 +158,14 @@ export const columns: ColumnDef<User>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Email Client
+          Email
           <ArrowUpDown className="mh-2 h-4 ml-2" />
         </Button>
       );
+    },
+    cell: ({ row }) => {
+      const email: String = row.original?.email;
+      return <div className="text-start ml-4 font-medium text-xs">{email}</div>;
     },
   },
 
@@ -177,13 +176,13 @@ export const columns: ColumnDef<User>[] = [
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
-        Nom Company
+        L'entreprise
         <ArrowUpDown className="mh-2 h-4 ml-2" />
       </Button>
     ),
     cell: ({ row }) => {
-      const companyName = row.getValue("companyName");
-      return companyName ? companyName : "Non renseigné"; // Utilise une valeur par défaut au lieu de " "
+      const companyName: string = row.getValue("companyName") as string;
+      return <div className="text-start ml-4 font-medium text-xs">{companyName ? companyName : "Non renseigné"}</div>; // Utilise une valeur par défaut au lieu de " "
     },
   },
 

@@ -46,9 +46,7 @@ const ActionsCell = ({ row }: { row: any }) => {
   return (
     <div className="flex items-center justify-center">
       <Link href={`/companies/edit/${id}`}>
-        <Button className="bg-transparent hover:bg-transparent">
-          <Edit className="h-1 w-1 text-emerald-500" />
-        </Button>
+        <Edit className="h-4 w-4 text-emerald-500" />
       </Link>
 
       <Button
@@ -71,20 +69,6 @@ const ActionsCell = ({ row }: { row: any }) => {
 
 export const columns: ColumnDef<Company>[] = [
   {
-    accessorKey: "id",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          id
-          <ArrowUpDown className="mh-2 h-4 ml-2" />
-        </Button>
-      );
-    },
-  },
-  {
     accessorKey: "name",
     header: ({ column }) => {
       return (
@@ -97,22 +81,82 @@ export const columns: ColumnDef<Company>[] = [
         </Button>
       );
     },
+    cell: ({ row }) => {
+      const name: String = row.original?.name;
+      return <div className="text-start ml-4 font-medium text-xs">{name}</div>;
+    },
   },
   {
     accessorKey: "admin_last_name",
-    header: "nom de l'admin",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Nom
+          <ArrowUpDown className="mh-2 h-4 ml-2" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const nom: String = row.original?.admin_last_name;
+      return <div className="text-start ml-4 font-medium text-xs">{nom}</div>;
+    },
   },
   {
     accessorKey: "admin_first_name",
-    header: "prenom de l'admin",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Prénom
+          <ArrowUpDown className="mh-2 h-4 ml-2" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const prenom: String = row.original?.admin_first_name;
+      return <div className="text-start ml-4 font-medium text-xs">{prenom}</div>;
+    },
   },
   {
     accessorKey: "adress",
-    header: "adresse",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Adresse
+          <ArrowUpDown className="mh-2 h-4 ml-2" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const adress: String = row.original?.adress;
+      return <div className="text-start ml-4 font-medium text-xs">{adress}</div>;
+    },
   },
   {
     accessorKey: "phone",
-    header: "Telephone",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Téléphone
+          <ArrowUpDown className="mh-2 h-4 ml-2" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const phone: String = row.original?.phone;
+      return <div className="text-start ml-4 font-medium text-xs">{phone}</div>;
+    },
   },
   {
     accessorKey: "actions",

@@ -24,6 +24,9 @@ export type AppareilInformationProps = {
 
 export type Appareil = {
     id : number 
+    nom? : string 
+    Voituremarque? : string 
+    immatricule? : string 
     name : string 
     description : string
     actif : boolean

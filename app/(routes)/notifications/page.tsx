@@ -1,8 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import axiosInstance from "@/lib/axiosInstance";
-import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
-import { clear } from "@/app/store/deliveredNotifsSlice";
 import { defaultFilter } from "@/typs/filter";
 import { BaseSelectWithFetch } from "@/app/components/base/BaseSelectWithFitch";
 import { BaseRangeDate } from "@/app/components/base/BaseRangeDate";
@@ -28,15 +25,10 @@ const Page = () => {
     from: undefined,
     to: undefined,
   });
-  const [urlApapreil, setUrlApapreil] = useState("");
+  const [urlApapreil, setUrlApapreil] = useState();
   const [pagination, setPagination] = useState<Pagination>();
 
   const [notifications, setNotifications] = useState([]);
-  const dispatch = useAppDispatch();
-
-  const changeNotificationStatus = async (notifId: Number) => {
-    return await axiosInstance.patch(`/notification/read/${notifId}`);
-  };
 
   const fetchNotifications = async () => {
     // dispatch(clear());
@@ -44,15 +36,6 @@ const Page = () => {
     // const data = response.data;
     // setNotifications(data);
   };
-
-  const readNotif = async (notifId: Number) => {
-    await changeNotificationStatus(notifId);
-    fetchNotifications();
-  };
-
-  useEffect(() => {
-    fetchNotifications();
-  }, []);
 
   return (
     <div>
@@ -70,7 +53,7 @@ const Page = () => {
             setValue={setSelectedClient}
           />
 
-          <BaseSelectWithFetch
+          {/* <BaseSelectWithFetch
             // label="Choisir un Appareil"
             placeholder="Choisir un Appareil"
             labelOption="VoitureNom"
@@ -78,15 +61,13 @@ const Page = () => {
             fetchUrl={urlApapreil}
             value={selectedValue}
             setValue={setSelectedValue}
-          />
+          />*/}
 
           <BaseRangeDate
             placeholder="Choisir une date"
             value={date}
             setValue={setDate}
           />
-
-          <Button>Rechercher</Button>
         </div>
 
         <DataTable
