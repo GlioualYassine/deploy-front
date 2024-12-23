@@ -1,4 +1,8 @@
 export function generateInvoiceHTML(invoice: any) {
+  const tvaTotal = invoice.paymentLines.reduce(
+    (sum: any, item: any) => sum + (item.unitPrice * item.tva) / 100,
+    0
+  );
   return `<!DOCTYPE html>
 <html lang="fr">
   <head>
@@ -77,13 +81,12 @@ export function generateInvoiceHTML(invoice: any) {
           <strong>À:</strong>
           <p>
             ${invoice?.clientName}<br />
-            456 Avenue du Client<br />
-            Tanger , Morocco
+            ${invoice?.clientEmail}<br />
           </p>
         </div>
       </div>
       <div class="invoice-date">
-        <strong>Facture N°:</strong> 001<br />
+        <strong>Facture N°: </strong> ${invoice?.ref}<br />
         <strong>Date:</strong> ${invoice?.datePaiement?.split("T")[0]}
       </div>
       <table class="table-pdf">
@@ -102,7 +105,9 @@ export function generateInvoiceHTML(invoice: any) {
                 <tr>
                   <td class="th-td-pdf">${item?.imei}</td>
                     <td class="th-td-pdf">${item?.totalPrice}</td>
-                    <td class="th-td-pdf">${invoice?.dateFrom?.split("T")[0]}</td>
+                    <td class="th-td-pdf">${
+                      invoice?.dateFrom?.split("T")[0]
+                    }</td>
                     <td class="th-td-pdf">${invoice?.dateTo?.split("T")[0]}</td>
                 </tr>
               `
@@ -114,7 +119,7 @@ export function generateInvoiceHTML(invoice: any) {
       </table>
       <div class="total">
         <p><strong>Total HT:</strong> ${invoice?.subtotal} DH</p>
-        <p><strong>TVA (20%):</strong> ${invoice?.total * 0.2} DH</p>
+        <p><strong>TVA (20%):</strong> ${tvaTotal} DH</p>
         <p><strong>Total TTC:</strong> ${invoice?.total} DH</p>
       </div>
     </div>

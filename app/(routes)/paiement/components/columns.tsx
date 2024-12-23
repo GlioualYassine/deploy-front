@@ -17,18 +17,18 @@ import DownloadInvoice from "./pdf/DownloadInvoice";
 // Define columns for the table
 export const columns: ColumnDef<Payment>[] = [
   {
-    accessorKey: "id",
+    accessorKey: "ref",
     header: ({ column }) => (
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
-        ID
+        Reference
         <ArrowUpDown className="mh-2 h-4 ml-2" />
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="text-center font-medium">{row.getValue("id")}</div>
+      <div className="text-center font-medium">{row.getValue("ref")}</div>
     ),
   },
   {

@@ -58,12 +58,24 @@ export function BaseSelectWithFetch({
         const response = await axiosInstance.get(fetchUrl);
         setOptions(response.data);
       } catch (error) {
+        setOptions([]);
         console.error("Failed to fetch options:", error);
       }
     }
 
     fetchData();
   }, [fetchUrl]);
+
+  // Update options when `data` prop changes
+  React.useEffect(() => {
+    if (!fetchUrl || fetchUrl === "") {
+      if (data?.length > 0) {
+        setOptions(data);
+      } else {
+        setOptions([]);
+      }
+    }
+  }, [data]);
 
   const filteredOptions = options.filter((option) =>
     option[labelOption]?.toLowerCase().includes(searchQuery.toLowerCase())
@@ -106,7 +118,7 @@ export function BaseSelectWithFetch({
                     value={option[valueOption].toString()}
                     onSelect={(currentValue) => {
                       const newValue =
-                        currentValue === value ? "" : currentValue;
+                        currentValue === value ? null : currentValue;
 
                       setValue(newValue);
                       setOpen(false);
@@ -124,6 +136,21 @@ export function BaseSelectWithFetch({
                   </CommandItem>
                 ))}
               </CommandGroup>
+              {/* Add a "Clear Selection" option */}
+              {value && (
+                <CommandGroup>
+                  <CommandItem
+                    value=""
+                    onSelect={() => {
+                      setValue(null);
+                      setOpen(false);
+                    }}
+                    className="text-red-500"
+                  >
+                    Effacer la sélection
+                  </CommandItem>
+                </CommandGroup>
+              )}
             </CommandList>
           </Command>
         </PopoverContent>

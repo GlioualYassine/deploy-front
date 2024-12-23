@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/popover";
 
 interface BaseRangeDateProps {
+  label?: string;
   className?: string;
   placeholder?: string;
   value: DateRange | undefined;
@@ -23,20 +24,28 @@ interface BaseRangeDateProps {
 
 export function BaseRangeDate({
   className,
+  label,
   placeholder,
   value,
   setValue,
 }: BaseRangeDateProps) {
-  
+  const [isPopoverOpen, setIsPopoverOpen] = React.useState<boolean>(false);
+
+  const handlePopoverClose = () => {
+    setIsPopoverOpen(false); // Close popover when submit button is clicked
+  };
+
   return (
     <div className={cn("grid gap-2", className)}>
-      <Popover>
+      
+      {label && <label className="text-sm font-medium">{label}</label>}
+      <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
         <PopoverTrigger asChild>
           <Button
             id="date"
             variant={"outline"}
             className={cn(
-              "w-[300px] justify-start text-left font-normal",
+              "w-full justify-start text-left font-normal",
               !value && "text-muted-foreground"
             )}
           >
@@ -64,6 +73,11 @@ export function BaseRangeDate({
             onSelect={setValue}
             numberOfMonths={2}
           />
+          <div className="p-2">
+            <Button variant="outline" onClick={handlePopoverClose}>
+              Fermer
+            </Button>
+          </div>
         </PopoverContent>
       </Popover>
     </div>

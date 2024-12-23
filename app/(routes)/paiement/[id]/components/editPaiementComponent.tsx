@@ -38,6 +38,8 @@ import {
 } from "@/components/ui/select";
 import { useRouter } from 'next/navigation'; // Import useRouter for redirection
 import { toast } from "@/components/ui/use-toast"; // Import toast from shadcn
+import { BaseRangeDate } from "@/app/components/base/BaseRangeDate";
+import { DateRange } from "react-day-picker";
 
 interface DeviceEntry {
   id?: number;
@@ -50,8 +52,6 @@ interface DeviceEntry {
 const PaymentEditPage = (props: editPaimentProp) => {
   const [clientName, setClientName] = useState<string>("");
   const [paymentDate, setPaymentDate] = useState<Date>(new Date());
-  const [periodFrom, setPeriodFrom] = useState<Date | null>(null);
-  const [periodTo, setPeriodTo] = useState<Date | null>(null);
   const [deviceList, setDeviceList] = useState<DeviceEntry[]>([]);
   const [subtotal, setSubtotal] = useState<number>(0);
   const [discount, setDiscount] = useState<number>(0);
@@ -63,14 +63,18 @@ const PaymentEditPage = (props: editPaimentProp) => {
     "border-red-500 text-red-500"
   );
 
+  const [period, setPeriod] = React.useState<DateRange | undefined>({
+    from: undefined,
+    to: undefined,
+  });
+
   const router = useRouter(); // Initialize the router
 
   useEffect(() => {
     // Set data to the form fields
     setClientName(props.paiement.clientName);
     setPaymentDate(new Date(props.paiement.datePaiement));
-    setPeriodFrom(new Date(props.paiement.dateFrom));
-    setPeriodTo(new Date(props.paiement.dateTo));
+    setPeriod({ from: new Date(props.paiement.dateFrom), to: new Date(props.paiement.dateTo) });
     setSubtotal(props.paiement.subtotal);
     setDiscount(props.paiement.discount);
     setShippingFee(props.paiement.shippingFee);
@@ -141,15 +145,24 @@ const PaymentEditPage = (props: editPaimentProp) => {
   };
 
   const handleSubmit = async () => {
-    if (!periodFrom || !periodTo) {
-      alert("Veuillez sélectionner une période.");
+    if (
+      !period?.from ||
+      !period.to ||
+      period.from == undefined ||
+      period.to == undefined
+    ) {
+      toast({
+        title: "Veuillez sélectionner une période.",
+        description: "La période est requise pour enregistrer le paiement.",
+        variant: "destructive",
+      });
       return;
     }
 
     const payload = {
       datePaiement: paymentDate,
-      dateFrom: periodFrom,
-      dateTo: periodTo,
+      dateFrom: period?.from,
+      dateTo: period?.to,
       subtotal,
       discount,
       shippingFee,
@@ -176,7 +189,7 @@ const PaymentEditPage = (props: editPaimentProp) => {
           description: "Paiement modifié avec succès !",
           variant: "default",
         });
-        router.push('/paiement/historique'); // Redirect to /paiements
+        router.push('/paiement'); // Redirect to /paiements
       } else {
         toast({
           title: "Erreur",
@@ -230,40 +243,33 @@ const PaymentEditPage = (props: editPaimentProp) => {
         <CardTitle className="text-lg font-semibold">
           Modifier la facture
         </CardTitle>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-4">
           <div>
-            <label className="text-gray-600 font-medium">Client</label>
+            <label className="text-sm font-medium">Client</label>
             <Input value={clientName} readOnly className="w-full bg-gray-100" />
           </div>
           <div>
-            <label className="text-gray-600 font-medium">
+            <label className="text-sm font-medium">
               Date de paiement
             </label>
             <DatePicker selectedDate={paymentDate} onSelect={setPaymentDate} />
           </div>
           <div>
-            <label className="text-gray-600 font-medium">Période</label>
-            <div className="flex gap-4">
-              <DatePicker
-                selectedDate={periodFrom}
-                onSelect={setPeriodFrom}
-                placeholder="Début"
-              />
-              <DatePicker
-                selectedDate={periodTo}
-                onSelect={setPeriodTo}
-                placeholder="Fin"
-              />
-            </div>
+            <BaseRangeDate
+                         label="Période"
+                         placeholder="Choisir une date"
+                         value={period}
+                         setValue={setPeriod}
+                       />
           </div>
         </div>
       </CardHeader>
 
       <CardContent>
-        <div className=" w-2/6 flex justify-between gap-3 items-center">
+        <div className=" flex justify-between gap-3 items-center">
           <div>
             <label className="text-gray-600 font-medium flex gap-x-2 mb-2">
-              <p>État de paiement </p>
+              <p className="text-sm font-medium">État de paiement </p>
               <Badge
                 className={`border ${badgeColor} px-10 py-1 rounded bg-transparent hover:bg-transparent`}
               >
@@ -397,9 +403,9 @@ const PaymentEditPage = (props: editPaimentProp) => {
         </div>
       </CardContent>
 
-      <CardFooter className="flex justify-end">
+      <CardFooter className="flex justify-center">
         <Button
-          className="bg-blue-600 text-white hover:bg-blue-700"
+          className=" text-white "
           onClick={handleSubmit}
         >
           Enregistrer les modifications

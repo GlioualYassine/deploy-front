@@ -42,12 +42,7 @@ export default function Home() {
   }, []);
 
   const choiaserAppareil = (value: any) => {
-
-    // i need find last position of the selected device
     const result = markers.find((marker: any) => marker.imei === value);
-
-    console.log("result", result);
-    
     setNewMarkers(result);
     setSelectedValue(value);
   };

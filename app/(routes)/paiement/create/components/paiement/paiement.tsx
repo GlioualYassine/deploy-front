@@ -30,6 +30,8 @@ import axiosInstance from "@/lib/axiosInstance";
 import { BaseSelectWithFetch } from "@/app/components/base/BaseSelectWithFitch";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
+import { DateRange } from "react-day-picker";
+import { BaseRangeDate } from "@/app/components/base/BaseRangeDate";
 // Define the client type based on updated User model
 interface Client {
   id: number;
@@ -55,16 +57,17 @@ interface PaymentEntryProps {
 }
 
 const PaymentEntry: React.FC<PaymentEntryProps> = ({ clients }) => {
-  const router = useRouter(); 
+  const router = useRouter();
 
   const [selectedValue, setSelectedValue] = useState();
-  
+
   const [filterText, setFilterText] = useState<string>("");
   const [paymentDate, setPaymentDate] = useState<Date>(new Date());
 
-  // General period dates
-  const [periodFrom, setPeriodFrom] = useState<Date | null>(null);
-  const [periodTo, setPeriodTo] = useState<Date | null>(null);
+  const [period, setPeriod] = React.useState<DateRange | undefined>({
+    from: undefined,
+    to: undefined,
+  });
 
   // Device list and calculation states
   const [deviceList, setDeviceList] = useState<DeviceEntry[]>([
@@ -166,7 +169,12 @@ const PaymentEntry: React.FC<PaymentEntryProps> = ({ clients }) => {
       return;
     }
 
-    if (!periodFrom || !periodTo) {
+    if (
+      !period?.from ||
+      !period.to ||
+      period.from == undefined ||
+      period.to == undefined
+    ) {
       toast({
         title: "Veuillez sélectionner une période.",
         description: "La période est requise pour enregistrer le paiement.",
@@ -178,7 +186,8 @@ const PaymentEntry: React.FC<PaymentEntryProps> = ({ clients }) => {
     if (deviceList.length === 0) {
       toast({
         title: "Veuillez ajouter au moins un appareil.",
-        description: "Ajoutez au moins un appareil pour enregistrer le paiement.",
+        description:
+          "Ajoutez au moins un appareil pour enregistrer le paiement.",
         variant: "destructive",
       });
       return;
@@ -195,8 +204,8 @@ const PaymentEntry: React.FC<PaymentEntryProps> = ({ clients }) => {
       discount,
       shippingFee,
       adjustment,
-      dateFrom: periodFrom,
-      dateTo: periodTo,
+      dateFrom: period?.from,
+      dateTo: period?.to,
       datePaiement: paymentDate,
     };
 
@@ -290,30 +299,17 @@ const PaymentEntry: React.FC<PaymentEntryProps> = ({ clients }) => {
           </div>
 
           <div>
-            <label className="text-gray-600 font-medium">Période</label>
-            <div className="grid grid-cols-1 sm:flex gap-4">
-              <div className="w-48 flex gap-2 items-center">
-                <label className="text-gray-600 font-medium">du</label>
-                <DatePicker
-                  selectedDate={periodFrom}
-                  onSelect={setPeriodFrom}
-                  placeholder="Date de début"
-                />
-              </div>
-              <div className="w-48 flex gap-2 items-center">
-                <label className="text-gray-600 font-medium">au</label>
-                <DatePicker
-                  selectedDate={periodTo}
-                  onSelect={setPeriodTo}
-                  placeholder="Date de fin"
-                />
-              </div>
-            </div>
+            <BaseRangeDate
+              label="Période"
+              placeholder="Choisir une date"
+              value={period}
+              setValue={setPeriod}
+            />
           </div>
         </div>
       </CardHeader>
       <CardContent>
-        <div className="mb-4 grid grid-cols-1 md:flex items-center gap-4 mt-12">
+        <div className="mb-4 grid grid-cols-1 md:flex items-center gap-4 mt-2">
           <label className="text-gray-600 font-medium">TVA Globale (%)</label>
           <Input
             type="number"
@@ -330,7 +326,7 @@ const PaymentEntry: React.FC<PaymentEntryProps> = ({ clients }) => {
         <Table className="w-full border mt-4">
           <TableHeader>
             <TableRow>
-              <TableHead>Description</TableHead>
+              <TableHead>Imei</TableHead>
               <TableHead>Prix unitaire (DHS)</TableHead>
               <TableHead>TVA (%)</TableHead>
               <TableHead>Montant (DHS)</TableHead>
@@ -342,7 +338,7 @@ const PaymentEntry: React.FC<PaymentEntryProps> = ({ clients }) => {
               <TableRow key={index}>
                 <TableCell>
                   <Input
-                    placeholder="Description"
+                    placeholder="Imei"
                     value={device.description}
                     onChange={(e) =>
                       handleDeviceChange(index, "description", e.target.value)
@@ -385,16 +381,16 @@ const PaymentEntry: React.FC<PaymentEntryProps> = ({ clients }) => {
             ))}
           </TableBody>
         </Table>
-        <Button
+        {/* <Button
           variant="ghost"
           className="bg-slate-300 mt-2"
           onClick={addDevice}
         >
           +
-        </Button>
+        </Button> */}
 
         {/* Summary Section */}
-        <div className="mt-6 space-y-2 border-t pt-4 w-1/2 mx-auto">
+        <div className="mt-6 space-y-2 border-t pt-4 mx-auto">
           <h2 className="text-lg font-semibold">Résumé</h2>
           <div className="flex justify-between">
             <span className="text-gray-600 font-medium">Sous-total</span>
@@ -437,10 +433,10 @@ const PaymentEntry: React.FC<PaymentEntryProps> = ({ clients }) => {
           </div>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-end">
+      <CardFooter className="flex justify-center">
         <Button
           onClick={handleSubmit}
-          className="bg-blue-600 text-white hover:bg-blue-700"
+          className="0 text-white"
         >
           Enregistrer le Paiement
         </Button>
