@@ -2,12 +2,19 @@
 
 import { Button } from "@/components/ui/button";
 import { generateInvoiceHTML } from "./InvoiceTemplate";
-import html2pdf from "html2pdf.js";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Download } from "lucide-react";
 
 export default function DownloadInvoice({ invoice }: { invoice: any }) {
-  const handleDownload = () => {
+  const handleDownload = async () => {
+    // Ensure this runs only in a browser environment
+    if (typeof window === "undefined") {
+      console.error("html2pdf.js can only run in a browser environment.");
+      return;
+    }
+
+    const html2pdf = (await import("html2pdf.js")).default; // Dynamically import html2pdf.js
+
     const invoiceHTML = generateInvoiceHTML(invoice); // Your HTML content as a string
     const element = document.createElement("div");
     element.innerHTML = invoiceHTML;
