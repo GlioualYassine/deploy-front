@@ -89,15 +89,15 @@ const ClientInformations = (props: { utilisateur: UtilisateurProp }) => {
         title: "Utilisateur modifié avec succès",
         
       })
-      dispatch(modifyClient({
-        id: id as number,
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        companyId: companyId as string,
-        role: role,
-        companyName: company ? company.name : null,
-      }));
+      // dispatch(modifyClient({
+      //   id: id as number,
+      //   firstName: firstName,
+      //   lastName: lastName,
+      //   email: email,
+      //   companyId: companyId as string,
+      //   role: role,
+      //   companyName: company ? company.name : null,
+      // }));
       router.push("/utilisateurs");
     } catch (error) {
       console.log(error);

@@ -1,4 +1,4 @@
-import { Payment } from "../../historique/components/ListHistorique/historique.types";
+import { Payment } from "../../components/historique.types";
 
 export interface editPaimentProp {
     paiement : Payment

@@ -40,7 +40,7 @@ const StatisticsNumerique: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
             <CardTitle className="text-sm font-smedium">
-              Chiffre d'affaires
+              Chiffre d&apos;affaires
             </CardTitle>
             <Coins className="h-4 w-4 text-muted-foreground" />
           </CardHeader>

@@ -67,13 +67,13 @@ const CompanyForm = (props: CompanyFormProps) => {
         let c: Company = {
           id: company.id,
           name: values.name,
-          adress: values.adress,
-          phone: values.phone,
+          adress: values.adress ?? "",
+          phone: values.phone ?? "",
           admin_id: company.admin_id,
           admin_first_name: values.admin_first_name,
           admin_last_name: values.admin_last_name,
           admin_email: values.admin_email,
-          password : values.password
+          password : values.password ?? ""
         };
 
         dispatch(modifyCompany(c));

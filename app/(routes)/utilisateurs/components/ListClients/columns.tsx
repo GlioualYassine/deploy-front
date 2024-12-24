@@ -176,7 +176,7 @@ export const columns: ColumnDef<User>[] = [
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
-        L'entreprise
+        L&apos;entreprise
         <ArrowUpDown className="mh-2 h-4 ml-2" />
       </Button>
     ),

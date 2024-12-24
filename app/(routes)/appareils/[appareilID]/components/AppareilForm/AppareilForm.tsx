@@ -206,7 +206,7 @@ const AppareilForm = (props: AppareilInformationProps) => {
     <div className=" shadow-md bg-white  rounded">
       <div className="flex items-center justify-between p-3 border-b">
         <h1 className="mr-2 p-2 text-md font-semibold">
-          Modifier les informations de l'appareil
+          Modifier les informations de l&apos;appareil
         </h1>
         <div>
           <button
