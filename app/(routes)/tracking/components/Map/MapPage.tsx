@@ -10,6 +10,14 @@ interface MapComponentProps {
   history: any[];
 }
 
+let LeafletIcon: any = null;
+
+if (typeof window !== "undefined") {
+  // Importer leaflet uniquement si on est côté client
+  const L = require("leaflet");
+  LeafletIcon = L.Icon;
+}
+
 const MapComponent: React.FC<MapComponentProps> = ({ apapreils, history }) => {
   const [MapComponents, setMapComponents] = useState<any>(null);
 
@@ -21,14 +29,19 @@ const MapComponent: React.FC<MapComponentProps> = ({ apapreils, history }) => {
 
     loadMapComponents();
   }, []);
-
-  const coloredIcon = (color: string = "blue") =>
-    new Icon({
-      iconUrl: `data:image/svg+xml;base64,${btoa(`...`)}`, // Your SVG here
+  const coloredIcon = (color = "blue") => {
+    if (!LeafletIcon) return null;
+    return new LeafletIcon({
+      iconUrl: `data:image/svg+xml;base64,${btoa(`
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${color}" width="25" height="41">
+          <path d="M12 0C8.13 0 5 3.13 5 7c0 4.9 7 17 7 17s7-12.1 7-17c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 4.5 12 4.5s2.5 1.12 2.5 2.5S13.38 9.5 12 9.5z" />
+        </svg>
+      `)}`,
       iconSize: [25, 41],
       iconAnchor: [12, 41],
       popupAnchor: [0, -41],
     });
+  };
 
   if (!MapComponents) return <div>Loading map...</div>;
 
@@ -50,8 +63,8 @@ const MapComponent: React.FC<MapComponentProps> = ({ apapreils, history }) => {
           <Marker
             key={marker.id}
             position={[
-              marker.lastPosition.latitude,
-              marker.lastPosition.longitude,
+              marker.lastPosition?.latitude ?? 0,
+              marker.lastPosition?.longitude ?? 0,
             ]}
             icon={coloredIcon(marker.deviceConnected ? "green" : "red")}
           >

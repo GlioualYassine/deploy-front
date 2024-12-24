@@ -37,6 +37,7 @@ export async function middleware(req) {
 
 export const config = {
   matcher: [
+    "/dashboard/:path*",
     "/utilisateurs/:path*",
     "/appareils/:path*",
     "/automobiles/:path*",

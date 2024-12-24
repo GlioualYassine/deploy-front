@@ -22,7 +22,7 @@ export const dataGeneralSidebar = [
   {
     icon: PanelsTopLeft,
     label: "Tableau de bord",
-    href: "/",
+    href: "/dashboard",
   },
   {
     icon: Building2,

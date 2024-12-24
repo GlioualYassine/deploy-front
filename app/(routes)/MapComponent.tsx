@@ -20,25 +20,23 @@ if (typeof window !== "undefined") {
 
 // Désactiver la SSR pour les composants react-leaflet
 const MapContainer = dynamic(
-  () => import("react-leaflet").then(mod => mod.MapContainer),
+  () => import("react-leaflet").then((mod) => mod.MapContainer),
   { ssr: false }
 );
 const TileLayer = dynamic(
-  () => import("react-leaflet").then(mod => mod.TileLayer),
+  () => import("react-leaflet").then((mod) => mod.TileLayer),
   { ssr: false }
 );
 const Marker = dynamic(
-  () => import("react-leaflet").then(mod => mod.Marker),
+  () => import("react-leaflet").then((mod) => mod.Marker),
   { ssr: false }
 );
-const Popup = dynamic(
-  () => import("react-leaflet").then(mod => mod.Popup),
-  { ssr: false }
-);
-const FlyToMarker = dynamic(
-  () => import("../components/map/FlyToMarker"),
-  { ssr: false }
-);
+const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), {
+  ssr: false,
+});
+const FlyToMarker = dynamic(() => import("../components/map/FlyToMarker"), {
+  ssr: false,
+});
 
 // Garde la même interface pour tes markers
 interface Marker {
@@ -57,7 +55,10 @@ interface MapComponentProps {
   selectedValue: string;
 }
 
-export default function MapComponent({ markers, selectedValue }: MapComponentProps) {
+export default function MapComponent({
+  markers,
+  selectedValue,
+}: MapComponentProps) {
   const [newMarkers, setNewMarkers] = useState<Marker | null>(null);
 
   /**
@@ -65,7 +66,7 @@ export default function MapComponent({ markers, selectedValue }: MapComponentPro
    * On vérifie d'abord si LeafletIcon est défini.
    */
   const coloredIcon = (color = "blue") => {
-    if (!LeafletIcon) return null; 
+    if (!LeafletIcon) return null;
     return new LeafletIcon({
       iconUrl: `data:image/svg+xml;base64,${btoa(`
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${color}" width="25" height="41">
@@ -86,37 +87,45 @@ export default function MapComponent({ markers, selectedValue }: MapComponentPro
   }, [selectedValue, markers]);
 
   return (
-    <div className="flex flex-col gap-2 w-full h-[60vh] relative">
-      <MapContainer center={[35.7632743, -5.8344698]} zoom={10} style={{ height: "100vh", width: "100%" }}>
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    <MapContainer
+      center={[35.7632743, -5.8344698]}
+      zoom={10}
+      style={{ height: "100vh", width: "100%" , zIndex: 0}}
+    >
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      />
+
+      {markers.map((marker) => {
+        // On crée l’icône dynamiquement
+        const icon = coloredIcon(marker.deviceConnected ? "green" : "red");
+        // Si l’icône est null (LeafletIcon pas dispo), on peut ignorer ou gérer différemment
+        if (!icon) return null;
+
+        return (
+          <Marker
+            key={marker.id}
+            position={[
+              marker?.lastPosition?.latitude ?? 0,
+              marker?.lastPosition?.longitude ?? 0,
+            ]}
+            icon={icon}
+          >
+            <Popup>{marker.nom}</Popup>
+          </Marker>
+        );
+      })}
+
+      {newMarkers && newMarkers.lastPosition && (
+        <FlyToMarker
+          position={[
+            newMarkers.lastPosition.latitude,
+            newMarkers.lastPosition.longitude,
+          ]}
+          zoomLevel={15}
         />
-
-        {markers.map((marker) => {
-          // On crée l’icône dynamiquement
-          const icon = coloredIcon(marker.deviceConnected ? "green" : "red");
-          // Si l’icône est null (LeafletIcon pas dispo), on peut ignorer ou gérer différemment
-          if (!icon) return null;
-
-          return (
-            <Marker
-              key={marker.id}
-              position={[marker.lastPosition.latitude, marker.lastPosition.longitude]}
-              icon={icon}
-            >
-              <Popup>{marker.nom}</Popup>
-            </Marker>
-          );
-        })}
-
-        {newMarkers && newMarkers.lastPosition && (
-          <FlyToMarker
-            position={[newMarkers.lastPosition.latitude, newMarkers.lastPosition.longitude]}
-            zoomLevel={15}
-          />
-        )}
-      </MapContainer>
-    </div>
+      )}
+    </MapContainer>
   );
 }

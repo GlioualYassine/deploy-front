@@ -32,7 +32,8 @@ export const adminRoutes = [
   "/notifications",
   "/paiement",
   "/tracking",
-  "/rapports"
+  "/rapports",
+  "/dashboard"
 ];
 
 export const nonAdminRoutes = [
@@ -40,7 +41,8 @@ export const nonAdminRoutes = [
   "/paiement",
   "/rapports",
   "/tracking",
-  "/notifications"
+  "/notifications",
+  "/dashboard"
 ];
 
 
