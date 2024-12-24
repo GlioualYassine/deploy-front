@@ -1,0 +1,33 @@
+.custom-popup {
+  background-color: white;
+  padding: 0px; /* Espacement plus large */
+  font-family: Arial, sans-serif; /* Police lisible */
+  color: #333; /* Texte sombre */
+  max-width: 250px; /* Limiter la largeur */
+}
+
+.custom-popup .leaflet-popup-content-wrapper {
+  border-radius: 12px; /* Assurez-vous que l'enveloppe respecte le design */
+}
+
+.custom-popup .leaflet-popup-content {
+  margin: 0; /* Supprime les marges par défaut */
+  font-size: 14px; /* Texte légèrement plus grand */
+}
+
+.custom-popup strong {
+  color: #2a9d8f; /* Couleur personnalisée pour les éléments importants */
+  font-weight: bold;
+}
+
+.custom-popup .line {
+  height: 1px;
+  background: #ddd; /* Ligne de séparation subtile */
+  margin: 10px 0;
+}
+
+.custom-popup .date {
+  font-size: 12px;
+  color: #666; /* Texte un peu plus clair */
+}
+
