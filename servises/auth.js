@@ -1,6 +1,7 @@
 "use client";
 import { toast } from "@/components/ui/use-toast";
-import { login } from "@/app/store/authSlice";
+import { login , getAuth } from "@/app/store/authSlice";
+
 import axiosInstance from "@/lib/axiosInstance";
 import Cookies from "js-cookie";
 // lib/auth.js
@@ -29,6 +30,19 @@ export const loginAuth = async (credentials, dispatch, router) => {
         description: "Please wait...",
       });
     });
+};
+
+export const fetchAuthData = () => async (dispatch) => {
+  try {
+    const res = await axiosInstance.get("auth/check-auth");
+    dispatch(
+      getAuth({
+        user: res.data, // Assuming `res.data` contains the user object
+      })
+    );
+  } catch (err) {
+    console.error("Error fetching auth data:", err);
+  }
 };
 
 export const logout = () => {

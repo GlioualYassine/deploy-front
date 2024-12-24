@@ -8,7 +8,8 @@ import { Pagination } from "@/typs/pagination";
 import { Payment } from "./components/historique.types";
 import ListHistorique from "./components/ListHistorique";
 
-
+import { selectUser } from "@/app/store/authSlice";
+import { useSelector } from "react-redux";
 const Page = () => {
   const { fetchAll } = useFetch("paiements");
 
@@ -25,15 +26,16 @@ const Page = () => {
     setPaiements(response.data);
     setPagination(response.pagination);
   };
+  const user = useSelector(selectUser);
 
   return (
     <div>
       <div className="flex justify-between items-center">
         <h2 className="text-2xl">List des factures</h2>
-        <Link href="paiement/create">
+        {user.role === "ROLE_GENERAL_ADMIN" && ( <Link href="paiement/create">
           <Button>Créer un facture</Button>
 
-        </Link>
+        </Link>) }
         
 
       </div>

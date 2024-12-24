@@ -40,10 +40,9 @@ import {
 import axiosInstance from "@/lib/axiosInstance";
 import { useAppDispatch } from "@/app/store/hooks";
 import { deleteDevice } from "@/app/store/deviceSlise";
+import { selectUser } from "@/app/store/authSlice";
+import { useSelector } from "react-redux";
 
-import { Eye } from "lucide-react"; // Assurez-vous que les icônes sont importées correctement
-
-// Composant pour les actions (supprimer, éditer, notifications, et historique des positions)
 const ActionCell = ({ divice }: { divice: Device }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useAppDispatch();
@@ -62,43 +61,45 @@ const ActionCell = ({ divice }: { divice: Device }) => {
       setIsOpen(false);
     }
   };
+  const user = useSelector(selectUser);
 
   return (
     <div className="flex gap-1 justify-center items-center">
-      {/* Bouton pour éditer */}
-      <Link href={`appareils/${divice.id}`}>
-        <button className=" bg-green-100 p-2 rounded-full">
-          <Pencil className="w-3 h-3 text-green-600 " />
-        </button>
-      </Link>
-
-      {/* Bouton pour supprimer */}
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogTrigger>
-          <button
-            className=" bg-red-100 p-2 rounded-full"
-            onClick={() => setIsOpen(true)}
-          >
-            <Trash className="w-3 h-3 text-red-500" />
+      {user.role === "ROLE_GENERAL_ADMIN" && (
+        <Link href={`appareils/${divice.id}`}>
+          <button className=" bg-green-100 p-2 rounded-full">
+            <Pencil className="w-3 h-3 text-green-600 " />
           </button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Êtes-vous sûr ?</DialogTitle>
-            <DialogDescription>
-              Cette action est irréversible.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="ghost" onClick={onCloseDialog}>
-              Annuler
-            </Button>
-            <Button variant="destructive" onClick={onDeleteDevice}>
-              Supprimer
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        </Link>
+      )}
+      {user.role === "ROLE_GENERAL_ADMIN" && (
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+          <DialogTrigger>
+            <button
+              className=" bg-red-100 p-2 rounded-full"
+              onClick={() => setIsOpen(true)}
+            >
+              <Trash className="w-3 h-3 text-red-500" />
+            </button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Êtes-vous sûr ?</DialogTitle>
+              <DialogDescription>
+                Cette action est irréversible.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="ghost" onClick={onCloseDialog}>
+                Annuler
+              </Button>
+              <Button variant="destructive" onClick={onDeleteDevice}>
+                Supprimer
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
       {/* Nouveau bouton pour l'historique des positions */}
       <Link href={`appareils/positions/${divice.imei}`}>
         <button className=" bg-amber-100 p-2 rounded-full">
@@ -107,11 +108,11 @@ const ActionCell = ({ divice }: { divice: Device }) => {
       </Link>
 
       {/* Bouton pour afficher les notifications */}
-      <Link href={`appareils/notifications/${divice.id}`}>
-        <button className=" bg-sky-100 p-2 rounded-full">
-          <BellDot className="w-3 h-3 text-sky-600" />
-        </button>
-      </Link>
+        <Link href={`appareils/notifications/${divice.id}`}>
+          <button className=" bg-sky-100 p-2 rounded-full">
+            <BellDot className="w-3 h-3 text-sky-600" />
+          </button>
+        </Link>
     </div>
   );
 };

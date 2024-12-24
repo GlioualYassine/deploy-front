@@ -1,6 +1,6 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Edit, Trash } from "lucide-react";
+import { ArrowUpDown, Edit, Pencil, Trash } from "lucide-react";
 import DeleteDialog from "../../../components/deleteModal";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -46,15 +46,17 @@ const ActionsCell = ({ row }: { row: any }) => {
   return (
     <div className="flex items-center justify-center">
       <Link href={`/companies/edit/${id}`}>
-        <Edit className="h-4 w-4 text-emerald-500" />
+        <button className=" bg-green-100 p-2 rounded-full mr-2">
+          <Pencil className="h-3 w-3 text-green-500 " />
+        </button>
       </Link>
 
-      <Button
-        className="bg-transparent hover:bg-transparent"
+      <button
+        className=" bg-red-100 p-2 rounded-full mr-2"
         onClick={() => setIsDeleteModalOpen(true)}
       >
-        <Trash className="h-1 w-1 text-red-500" />
-      </Button>
+        <Trash className="w-3 h-3 text-red-500" />
+      </button>
 
       <DeleteDialog
         isOpen={isDeleteModalOpen}
@@ -119,7 +121,9 @@ export const columns: ColumnDef<Company>[] = [
     },
     cell: ({ row }) => {
       const prenom: String = row.original?.admin_first_name;
-      return <div className="text-start ml-4 font-medium text-xs">{prenom}</div>;
+      return (
+        <div className="text-start ml-4 font-medium text-xs">{prenom}</div>
+      );
     },
   },
   {
@@ -137,7 +141,9 @@ export const columns: ColumnDef<Company>[] = [
     },
     cell: ({ row }) => {
       const adress: String = row.original?.adress;
-      return <div className="text-start ml-4 font-medium text-xs">{adress}</div>;
+      return (
+        <div className="text-start ml-4 font-medium text-xs">{adress}</div>
+      );
     },
   },
   {

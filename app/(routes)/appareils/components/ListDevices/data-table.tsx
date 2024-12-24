@@ -33,7 +33,8 @@ import {
 } from "@/components/ui/select";
 import { defaultFilter } from "@/typs/filter";
 import { BaseSelectWithFetch } from "@/app/components/base/BaseSelectWithFitch";
-
+import { selectUser } from "@/app/store/authSlice";
+import { useSelector } from "react-redux";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -54,6 +55,7 @@ export function DataTable<TData, TValue>({
 
   const [isMounted, setIsMounted] = React.useState<boolean>(false);
   const [selectedValue, setSelectedValue] = React.useState();
+  const user = useSelector(selectUser);
 
   const [filter, setFilter] = React.useState({ ...defaultFilter });
 
@@ -148,14 +150,17 @@ export function DataTable<TData, TValue>({
             table.getColumn("marque")?.setFilterValue(event.target.value)
           }
         /> */}
-        <BaseSelectWithFetch
-          placeholder="Choisir un Client"
-          labelOption="firstName"
-          valueOption="id"
-          fetchUrl="users/clients"
-          value={selectedValue}
-          setValue={changeValue}
-        />
+        {(user.role === "ROLE_GENERAL_ADMIN" ||
+          user.role === "ROLE_COMPANY_ADMIN") && (
+          <BaseSelectWithFetch
+            placeholder="Choisir un Client"
+            labelOption="firstName"
+            valueOption="id"
+            fetchUrl="users/clients"
+            value={selectedValue}
+            setValue={changeValue}
+          />
+        )}
       </div>
       <div className="rounded-md border">
         <Table>

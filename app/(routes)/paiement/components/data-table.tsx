@@ -34,7 +34,8 @@ import {
 import { Pagination } from "@/typs/pagination";
 import { defaultFilter } from "@/typs/filter";
 import { BaseSelectWithFetch } from "@/app/components/base/BaseSelectWithFitch";
-
+import { selectUser } from "@/app/store/authSlice";
+import { useSelector } from "react-redux";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -52,6 +53,7 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+  const user = useSelector(selectUser);
 
   const [isMounted, setIsMounted] = React.useState<boolean>(false);
   const [filter, setFilter] = React.useState({ ...defaultFilter });
@@ -135,20 +137,21 @@ export function DataTable<TData, TValue>({
       clientId: value,
     });
     setSelectedValue(value);
-   
-  }
+  };
 
   return (
     <div className="p-4 bg-background shadow-md rounded-lg mt-4">
       <div className="flex items-center mb-2">
-        <BaseSelectWithFetch
-          placeholder="Choisir un Client"
-          labelOption="firstName"
-          valueOption="id"
-          fetchUrl="users/clients"
-          value={selectedValue}
-          setValue={changeClient}
-        />
+        {(user.role === "ROLE_GENERAL_ADMIN" || user.role === "ROLE_COMPANY_ADMIN" ) && (
+          <BaseSelectWithFetch
+            placeholder="Choisir un Client"
+            labelOption="firstName"
+            valueOption="id"
+            fetchUrl="users/clients"
+            value={selectedValue}
+            setValue={changeClient}
+          />
+        )}
       </div>
       <div className="rounded-md border">
         <Table>

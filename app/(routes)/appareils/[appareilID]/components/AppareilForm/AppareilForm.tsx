@@ -191,8 +191,7 @@ const AppareilForm = (props: AppareilInformationProps) => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       const response = await axiosInstance.patch(`gpsDevices/${values.id}`, values);
-      console.log("rep ", response.data);
-      // router.push("/appareils");
+       router.push("/appareils");
     } catch (error: any) {
       console.error("Erreur lors de la modification de l'appareil", error);
       toast({

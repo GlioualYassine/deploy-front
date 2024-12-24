@@ -8,17 +8,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
+import { selectUser } from "@/app/store/authSlice";
+import { useSelector } from "react-redux";
 import { useState } from "react";
 import FormCreateAutomobile from "../FormCreateClient/FormCreateClient";
 
 const HeaderClients = () => {
   const [openModalCreate, setOpenModalCreate] = useState(false);
+  const user = useSelector(selectUser);
 
   return (
     <div className="flex justify-between items-center ">
       <h2 className="text-2xl">Liste des Clients</h2>
-      <Dialog open={openModalCreate} onOpenChange={setOpenModalCreate}>
+      {user.role === "ROLE_GENERAL_ADMIN" && ( <Dialog open={openModalCreate} onOpenChange={setOpenModalCreate}>
         <DialogTrigger asChild>
           <Button>Créer Client</Button>
         </DialogTrigger>
@@ -31,7 +33,7 @@ const HeaderClients = () => {
           </DialogHeader>
           <FormCreateAutomobile setOPenModalCreate={setOpenModalCreate} />
         </DialogContent>
-      </Dialog>
+      </Dialog>)}
     </div>
   );
 };

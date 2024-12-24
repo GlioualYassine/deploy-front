@@ -11,6 +11,8 @@ import { BaseRangeDate } from "@/app/components/base/BaseRangeDate";
 import FlyToMarker from "@/app/components/map/FlyToMarker";
 import axiosInstance from "@/lib/axiosInstance";
 import { CalendarDays, CircleGauge, Space } from "lucide-react";
+import { selectUser } from "@/app/store/authSlice";
+import { useSelector } from "react-redux";
 
 const Page = () => {
   const coloredIcon = (color: string = "blue") =>
@@ -37,6 +39,9 @@ const Page = () => {
   const [apapreils, setApapreils] = React.useState<Record<string, string>[]>(
     []
   );
+
+  const user = useSelector(selectUser);
+
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: undefined,
     to: undefined,
@@ -95,14 +100,17 @@ const Page = () => {
   return (
     <div className="p-4 bg-background shadow-md rounded-lg mt-4">
       <div className="flex gap-4 items-center mt-0 mb-4 z-50 border-b pb-4">
-        <BaseSelectWithFetch
-          placeholder="Choisir un Client"
-          labelOption="firstName"
-          valueOption="id"
-          fetchUrl="users/clients"
-          value={selectedClient}
-          setValue={selectedData}
-        />
+        {(user.role === "ROLE_GENERAL_ADMIN" ||
+          user.role === "ROLE_COMPANY_ADMIN") && (
+          <BaseSelectWithFetch
+            placeholder="Choisir un Client"
+            labelOption="firstName"
+            valueOption="id"
+            fetchUrl="users/clients"
+            value={selectedClient}
+            setValue={selectedData}
+          />
+        )}
 
         <BaseSelectWithFetch
           placeholder="Choisir un Appareil"
@@ -178,15 +186,17 @@ const Page = () => {
             </Marker>
           ))}
 
-          {newMarkers && newMarkers?.lastPosition && newMarkers?.lastPosition != undefined  && (
-            <FlyToMarker
-              position={[
-                newMarkers?.lastPosition?.latitude,
-                newMarkers?.lastPosition?.longitude,
-              ]}
-              zoomLevel={15}
-            />
-          )}
+          {newMarkers &&
+            newMarkers?.lastPosition &&
+            newMarkers?.lastPosition != undefined && (
+              <FlyToMarker
+                position={[
+                  newMarkers?.lastPosition?.latitude,
+                  newMarkers?.lastPosition?.longitude,
+                ]}
+                zoomLevel={15}
+              />
+            )}
         </MapContainer>
       </div>
     </div>

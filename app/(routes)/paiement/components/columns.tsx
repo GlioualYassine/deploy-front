@@ -13,6 +13,8 @@ import { Payment } from "./historique.types"; // Adjust the path to where Paieme
 import axiosInstance from "@/lib/axiosInstance";
 import { Badge } from "@/components/ui/badge";
 import DownloadInvoice from "./pdf/DownloadInvoice";
+import { selectUser } from "@/app/store/authSlice";
+import { useSelector } from "react-redux";
 
 // Define columns for the table
 export const columns: ColumnDef<Payment>[] = [
@@ -118,47 +120,31 @@ export const columns: ColumnDef<Payment>[] = [
     header: "Actions",
     cell: ({ row }) => {
       const { id } = row.original;
-
-      // const handleDownloadReceipt = async (id: string) => {
-      //   try {
-      //     const response = await axiosInstance.get(`/paiements/${id}/receipt`, {
-      //       responseType: "blob", // Ensures response is processed as binary data
-      //     });
-
-      //     const url = window.URL.createObjectURL(
-      //       new Blob([response.data], { type: "application/pdf" })
-      //     );
-      //     const link = document.createElement("a");
-      //     link.href = url;
-      //     link.setAttribute("download", `PaymentReceipt_${id}.pdf`); // Set the download file name
-      //     document.body.appendChild(link);
-      //     link.click();
-      //     document.body.removeChild(link);
-      //   } catch (error) {
-      //     console.error("Error downloading the receipt:", error);
-      //     alert("Échec du téléchargement du reçu.");
-      //   }
-      // };
+      const user = useSelector(selectUser);
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <Button variant="ghost" className="w-8 h-4 p-0">
-              <span className="sr-only">Open Menu</span>
-              <MoreHorizontal className="w-4 h-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <Link href={`/paiement/${id}`}>
-              <DropdownMenuItem className="cursor-pointer">
-                <Pen className="w-4 h-4 mr-2" />
-                éditer
-              </DropdownMenuItem>
-            </Link>
+        <div>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Button variant="ghost" className="w-8 h-4 p-0">
+                <span className="sr-only">Open Menu</span>
+                <MoreHorizontal className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {user.role === "ROLE_GENERAL_ADMIN" && (
+                <Link href={`/paiement/${id}`}>
+                  <DropdownMenuItem className="cursor-pointer">
+                    <Pen className="w-4 h-4 mr-2" />
+                    éditer
+                  </DropdownMenuItem>
+                </Link>
+              )}
 
-            <DownloadInvoice invoice={row.original} />
-          </DropdownMenuContent>
-        </DropdownMenu>
+              <DownloadInvoice invoice={row.original} />
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       );
     },
   },

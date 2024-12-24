@@ -1,17 +1,35 @@
-import axios from 'axios';
 import { NextResponse, NextRequest } from 'next/server';
-import axiosInstance from './lib/axiosInstance';
+import { checkAuth, getUserRole, adminRoutes, nonAdminRoutes } from './authUtils';
 
-export default async function middleware(req) {
-  const authTokens = req.cookies.get('authTokens');
+export async function middleware(req) {
+  const authTokens = req.cookies.get('authTokens')?.value;
   
-  const isAuthenticated = await checkAuth(authTokens?.value);
+  if (!authTokens) {
+    return NextResponse.redirect(new URL('/sign-in', req.url));
+  }
 
-  console.log(isAuthenticated);
-  console.log('middleware');
+  const isAuthenticated = await checkAuth(authTokens);
 
   if (!isAuthenticated) {
-    return NextResponse.redirect(new URL('/sign-in', req.nextUrl));
+    return NextResponse.redirect(new URL('/sign-in', req.url));
+  }
+
+  const role = await getUserRole(authTokens);
+  const isAdmin = role === 'ROLE_GENERAL_ADMIN';
+  const allowedRoutes = role === 'ROLE_GENERAL_ADMIN' ? adminRoutes : nonAdminRoutes;
+
+  if (!isAdmin && req.nextUrl.pathname === '/appareils/create') {
+    return NextResponse.redirect(new URL('/not-authorized', req.url));
+  }
+
+  if (!isAdmin && req.nextUrl.pathname === '/paiement/create') {
+    return NextResponse.redirect(new URL('/not-authorized', req.url));
+  }
+
+  const pathMatched = allowedRoutes.some(route => req.nextUrl.pathname.startsWith(route));
+
+  if (!pathMatched) {
+    return NextResponse.redirect(new URL('/not-authorized', req.url));
   }
 
   return NextResponse.next();
@@ -19,30 +37,14 @@ export default async function middleware(req) {
 
 export const config = {
   matcher: [
-    "/", // Page d'accueil
-    "/utilisateurs/:path*", // Page utilisateurs
-    "/appareils/:path*", // Sous-routes des appareils
-    "/automobiles/:path*", // Sous-routes des automobiles
-    "/companies/:path*", // Sous-routes des entreprises
-    "/notifications/:path*", // Notifications
-    "/paiement/:path*", // Paiement
-    "/tracking/:path*", // Tracking (sous-dossier components/Map inclus)
+    "/utilisateurs/:path*",
+    "/appareils/:path*",
+    "/automobiles/:path*",
+    "/companies/:path*",
+    "/notifications/:path*",
+    "/paiement/:path*",
+    "/tracking/:path*",
+    "/rapports/:path*"
   ],
 };
 
-
-const checkAuth = async (token) => {
-  try {
-    const res = await axiosInstance.get('auth/check-auth', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    
-    // Si la réponse est réussie, tu renvoies true.
-    return true;
-  } catch (err) {
-    // En cas d'erreur (auth échouée), tu renvoies false.
-    return false;
-  }
-};

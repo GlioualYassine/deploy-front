@@ -11,9 +11,13 @@ import {
   VibrateOff,
 } from "lucide-react";
 import axiosInstance from "@/lib/axiosInstance";
+import { selectUser } from "@/app/store/authSlice";
+import { useSelector } from "react-redux";
 
 const StatisticsNumerique: React.FC = () => {
   const [data, setData] = React.useState<any>({});
+
+  const user = useSelector(selectUser);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,46 +31,62 @@ const StatisticsNumerique: React.FC = () => {
     fetchData();
   }, []);
   return (
-    <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-4">
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
-          <CardTitle className="text-sm font-smedium">
-            Chiffre d'affaires
-          </CardTitle>
-          <Coins className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-m font-bold">{data?.total} DH</div>
-        </CardContent>
-      </Card>
+    <div
+      className={`grid gap-2 md:grid-cols-2 ${
+        user.role === "ROLE_USER" ? "lg:grid-cols-3" : "lg:grid-cols-4"
+      }`}
+    >
+      {user.role === "ROLE_GENERAL_ADMIN" && (
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
+            <CardTitle className="text-sm font-smedium">
+              Chiffre d'affaires
+            </CardTitle>
+            <Coins className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-m font-bold">{data?.total} DH</div>
+          </CardContent>
+        </Card>
+      )}
+      {user.role === "ROLE_GENERAL_ADMIN" && (
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
+            <CardTitle className="text-sm font-medium">
+              Factures payées
+            </CardTitle>
+            <FileCheck className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent className="flex flex-row items-center justify-between space-y-0 pb-1">
+            <div className="text-m font-bold">{data?.totalPaid} DH</div>
+            <div>
+              <span className="text-xs font-medium">
+                {data?.facteurPayedCount}
+              </span>{" "}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
-          <CardTitle className="text-sm font-medium">Factures payées</CardTitle>
-          <FileCheck className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent className="flex flex-row items-center justify-between space-y-0 pb-1">
-          <div className="text-m font-bold">{data?.totalPaid} DH</div>
-          <div>
-            <span className="text-xs font-medium">{data?.facteurPayedCount}</span>{" "}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
-          <CardTitle className="text-sm font-medium">
-            Factures en cours
-          </CardTitle>
-          <FileClock className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent className="flex flex-row items-center justify-between space-y-0 pb-1">
-          <div className="text-m font-bold">{data?.totalUnpaid} DH</div>
-          <div>
-            <span className="text-xs font-medium">{data?.facteurUnpaidCount}</span>{" "}
-          </div>
-        </CardContent>
-      </Card>
+      {(user.role === "ROLE_GENERAL_ADMIN" ||
+        user.role === "ROLE_COMPANY_ADMIN") && (
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
+            <CardTitle className="text-sm font-medium">
+              Factures en cours
+            </CardTitle>
+            <FileClock className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent className="flex flex-row items-center justify-between space-y-0 pb-1">
+            <div className="text-m font-bold">{data?.totalUnpaid} DH</div>
+            <div>
+              <span className="text-xs font-medium">
+                {data?.facteurUnpaidCount}
+              </span>{" "}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
@@ -102,25 +122,29 @@ const StatisticsNumerique: React.FC = () => {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
-          <CardTitle className="text-sm font-medium">Entreprises</CardTitle>
-          <School className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-m font-bold">{data?.companyCount}</div>
-        </CardContent>
-      </Card>
+      {user.role === "ROLE_GENERAL_ADMIN" && (
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
+            <CardTitle className="text-sm font-medium">Entreprises</CardTitle>
+            <School className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-m font-bold">{data?.companyCount}</div>
+          </CardContent>
+        </Card>
+      )}
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
-          <CardTitle className="text-sm font-medium">Utilisateurs</CardTitle>
-          <Users className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-m font-bold">{data?.userCount}</div>
-        </CardContent>
-      </Card>
+      {user.role === "ROLE_GENERAL_ADMIN" && (
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
+            <CardTitle className="text-sm font-medium">Utilisateurs</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-m font-bold">{data?.userCount}</div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
