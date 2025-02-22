@@ -14,6 +14,13 @@ export async function middleware(req) {
     return NextResponse.redirect(new URL('/sign-in', req.url));
   }
 
+  console.log('req.nextUrl.pathname', req.nextUrl.pathname);
+  
+
+  if(req.nextUrl.pathname === '/sign-in' && isAuthenticated) {
+    return NextResponse.redirect(new URL('/dashboard', req.url));
+  }
+
   const role = await getUserRole(authTokens);
   const isAdmin = role === 'ROLE_GENERAL_ADMIN';
   const allowedRoutes = role === 'ROLE_GENERAL_ADMIN' ? adminRoutes : nonAdminRoutes;
