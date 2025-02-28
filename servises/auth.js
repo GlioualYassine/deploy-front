@@ -20,7 +20,7 @@ export const loginAuth = async (credentials, dispatch, router) => {
 
       dispatch(login({ user }));
       //window.location.href = "/";
-      router.push("/");
+      router.push("/dashboard");
     })
     .catch((error) => {
       console.log(error);
