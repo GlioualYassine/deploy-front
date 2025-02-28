@@ -31,11 +31,12 @@ import { useAppDispatch } from "@/app/store/hooks";
 import { addClient } from "@/app/store/clientsSlice";
 
 const formSchema = z.object({
-  firstName: z.string().min(2).max(50),
-  lastName: z.string().min(2).max(50),
+  firstName: z.string().min(2).max(255),
+  lastName: z.string().min(2).max(255),
   password: z.string().min(6),
   email: z.string().min(6),
   companyId: z.string().nullable(),
+  identifiant: z.string().min(2).max(255),
 });
 
 const FormCreateAutomobile = (props: FormCreateClientProps) => {
@@ -71,6 +72,7 @@ const FormCreateAutomobile = (props: FormCreateClientProps) => {
       email: "",
       companyId: "",
       password: "",
+      identifiant: ""
     },
   });
 
@@ -79,13 +81,14 @@ const FormCreateAutomobile = (props: FormCreateClientProps) => {
   // Define the submit handler for the form
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values);
-    let { firstName, lastName, email, companyId,password } = values;
+    let { firstName, lastName, email, companyId,password , identifiant } = values;
     const parsedCompanyId = parseInt(companyId as string);
     try {
       const response = await axiosInstance.post("users/clients", {
         firstName,
         lastName,
         email,
+        identifiant,
         companyId: parsedCompanyId,
         password
       });
@@ -97,6 +100,7 @@ const FormCreateAutomobile = (props: FormCreateClientProps) => {
         addClient({
           id: response.data.id,
           firstName: firstName,
+          identifiant: identifiant,
           lastName: lastName,
           email: email,
           password: password,
@@ -145,6 +149,22 @@ const FormCreateAutomobile = (props: FormCreateClientProps) => {
               </FormItem>
             )}
           />
+
+
+          <FormField
+            control={form.control}
+            name="identifiant"
+            render={({ field }: { field: any }) => (
+              <FormItem>
+                <FormLabel>Username</FormLabel>{" "}
+                <FormControl>
+                  <Input placeholder="Username" type="text" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
 
           <FormField
             control={form.control}

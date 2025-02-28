@@ -32,6 +32,7 @@ import { client } from "stompjs";
 
 interface Client {
   id: number;
+  identifiant: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -150,6 +151,26 @@ export const columns: ColumnDef<User>[] = [
       return <div className="text-start ml-4 font-medium text-xs">{lastName}</div>;
     },
   },
+
+  {
+    accessorKey: "username",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Username
+          <ArrowUpDown className="mh-2 h-4 ml-2" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const username: String = row.original?.identifiant;
+      return <div className="text-start ml-4 font-medium text-xs">{username}</div>;
+    },
+  },
+
   {
     accessorKey: "email",
     header: ({ column }) => {
