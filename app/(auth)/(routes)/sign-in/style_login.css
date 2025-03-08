@@ -1,0 +1,28 @@
+/* Default style */
+.transparent-background {
+  background: rgba(203, 203, 203, 0.5);
+}
+
+.background-image-login {
+  background-image: url("/bgweb1.png");
+  background-repeat: no-repeat;
+  height: 100vh;
+  background-size: cover;
+}
+
+/* For mobile (adjust opacity) */
+@media (max-width: 768px) {
+  .transparent-background {
+    background: none; /* Adjust opacity for mobile */
+  }
+
+  .background-image-login {
+    background-image: url("/mobel-bg.png");
+    background-repeat: no-repeat;
+    height: 100vh;
+    background-size: contain;
+    background-position: bottom 30px  right;
+
+  }
+  
+}

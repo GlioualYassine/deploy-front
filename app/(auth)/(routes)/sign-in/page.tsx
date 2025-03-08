@@ -4,6 +4,7 @@ import { useAppDispatch } from "@/app/store/hooks";
 import { Button } from "@/components/ui/button";
 import { loginAuth } from "@/servises/auth";
 import Logo from "@/components/Logo/Logo";
+import "./style_login.css";
 
 import {
   Card,
@@ -31,21 +32,10 @@ export default function Page() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "rgb(42 61 98)" }}>
-      <div
-        className="grid grid-cols-1  md:grid-cols-3 w-full h-full"
-        style={{
-          backgroundImage: "url('/bgweb1.png')",
-          backgroundRepeat: "no-repeat",
-          height: "100vh",
-          backgroundSize: "cover",
-        }}
-      >
+      <div className="grid grid-cols-1  md:grid-cols-3 w-full h-full background-image-login">
         <div className=" flex flex-col col-span-2 items-center justify-center text-white "></div>
 
-        <div
-          className="p-10 flex items-center justify-center w-full h-screen"
-          style={{ background: "rgba(203, 203, 203, 0.5)" }}
-        >
+        <div className="p-10 flex items-center justify-center w-full h-screen transparent-background">
           <Card className="w-96 justify-center bg-transparent  border-none shadow-none">
             <CardHeader>
               <Logo />
