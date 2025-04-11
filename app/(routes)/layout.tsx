@@ -11,9 +11,9 @@ const LayoutDashboard = ({ children }: { children: React.ReactElement }) => {
   const activePath = pathname === "/";
 
   return (
-    <div className="flex w-full">
+    <div className="flex w-full " >
       {!activePath && (
-        <div className="hidden xl:block w-80 h-full xl:fixed overflow-x-auto">
+        <div className="hidden xl:block w-80 h-full xl:fixed overflow-x-auto" style={{ backgroundColor: "#264773" , color: "#fff"}}>
           <Sidebar />
         </div>
       )}

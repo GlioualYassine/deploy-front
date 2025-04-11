@@ -124,7 +124,7 @@ const ClientInformations = (props: { utilisateur: UtilisateurProp }) => {
               </CardDescription>
             </CardHeader>
 
-            <CardContent className="space-y-3">
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
               {/* Prénom */}
               <FormField
                 control={form.control}
@@ -253,7 +253,7 @@ const ClientInformations = (props: { utilisateur: UtilisateurProp }) => {
                 )}
               />
             </CardContent>
-            <CardFooter className="flex justify-between">
+            <CardFooter className="flex justify-end space-x-4">
               <Button variant="outline" onClick={handleCancel}> Annuler</Button>
               <Button type="submit">Modifier l&#39;utilisateur</Button>
             </CardFooter>

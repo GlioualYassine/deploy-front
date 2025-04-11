@@ -58,9 +58,9 @@ export function generateInvoiceHTML(invoice: any) {
       <div class="invoice-header">
         <div class="invoice-details">
           <div><h1>Facture</h1></div>
-          <div>
+          <div style="background-color: #888a8b; justify-content: center ;align-self: center;padding: 12px;">
             <img
-              src="C:\Users\achra\Documents\project\me\nostrum\geolocation\deploy-front\public/logo.png"
+              src="/logo2.png"
               alt="Logo Ramycan"
               width="200"
             />

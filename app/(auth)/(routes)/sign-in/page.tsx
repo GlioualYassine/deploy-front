@@ -33,7 +33,9 @@ export default function Page() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: "rgb(42 61 98)" }}>
       <div className="grid grid-cols-1  md:grid-cols-3 w-full h-full background-image-login">
-        <div className=" flex flex-col col-span-2 items-center justify-center text-white "></div>
+        <div className=" flex flex-col col-span-2 items-center justify-center text-white ">
+          <h1 className="text-center text-2xl text-white">Précision et rapidité, à chaque instant</h1>
+        </div>
 
         <div className="p-10 flex items-center justify-center w-full h-screen transparent-background">
           <Card className="w-96 justify-center bg-transparent  border-none shadow-none">

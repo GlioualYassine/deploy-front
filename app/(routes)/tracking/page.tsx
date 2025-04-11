@@ -95,7 +95,7 @@ const Page = () => {
       </div>
 
       <div className="flex flex-col gap-2 w-full h-[80vh] relative">
-        <MapComponent apapreils={apapreils} history={history} />
+        <MapComponent apapreils={apapreils} history={history}   selectedValue={selectedValue || ""} />
       </div>
     </div>
   );

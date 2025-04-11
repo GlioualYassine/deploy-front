@@ -68,14 +68,15 @@ export const columns: ColumnDef<any>[] = [
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
-        Distance
+        Gazoil
         <ArrowUpDown className="mh-2 h-4 ml-2" />
       </Button>
     ),
     cell: ({ row }) => {
       return (
         <div className="text-start ml-4 font-medium text-xs">
-          {(row.getValue("distance") as number)?.toFixed(2)} Km
+          {/* {(row.getValue("distance") as number)?.toFixed(2)} Km */}
+          0.00 L
         </div>
       );
     },

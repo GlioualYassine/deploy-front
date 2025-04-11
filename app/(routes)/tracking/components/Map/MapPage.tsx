@@ -5,9 +5,17 @@ import dynamic from "next/dynamic";
 import { Icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 
+const FlyToMarker = dynamic(
+  () => import("../../../../components/map/FlyToMarker"),
+  {
+    ssr: false,
+  }
+);
+
 interface MapComponentProps {
   apapreils: any[];
   history: any[];
+  selectedValue: string;
 }
 
 let LeafletIcon: any = null;
@@ -18,17 +26,43 @@ if (typeof window !== "undefined") {
   LeafletIcon = L.Icon;
 }
 
-const MapComponent: React.FC<MapComponentProps> = ({ apapreils, history }) => {
+interface Marker {
+  id: string;
+  imei: string;
+  nom: string;
+  lastPosition: {
+    latitude: number;
+    longitude: number;
+  };
+  deviceConnected: boolean;
+}
+
+const MapComponent: React.FC<MapComponentProps> = ({
+  apapreils,
+  history,
+  selectedValue,
+}) => {
   const [MapComponents, setMapComponents] = useState<any>(null);
+  const [newMarkers, setNewMarkers] = useState<Marker | null>(null);
 
   useEffect(() => {
     const loadMapComponents = async () => {
-      const { MapContainer, TileLayer, Marker, Popup } = await import("react-leaflet");
+      const { MapContainer, TileLayer, Marker, Popup } = await import(
+        "react-leaflet"
+      );
       setMapComponents({ MapContainer, TileLayer, Marker, Popup });
     };
 
     loadMapComponents();
   }, []);
+
+  useEffect(() => {
+    if (selectedValue) {
+      const result = apapreils.find((marker) => marker.imei === selectedValue);
+      setNewMarkers(result || null);
+    }
+  }, [selectedValue, apapreils]);
+
   const coloredIcon = (color = "blue") => {
     if (!LeafletIcon) return null;
     return new LeafletIcon({
@@ -85,6 +119,16 @@ const MapComponent: React.FC<MapComponentProps> = ({ apapreils, history }) => {
           </Popup>
         </Marker>
       ))}
+
+      {newMarkers && newMarkers?.lastPosition && (
+        <FlyToMarker
+          position={[
+            newMarkers?.lastPosition?.latitude,
+            newMarkers?.lastPosition?.longitude,
+          ]}
+          zoomLevel={15}
+        />
+      )}
     </MapContainer>
   );
 };

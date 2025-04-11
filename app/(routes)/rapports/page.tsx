@@ -32,7 +32,7 @@ const Page = () => {
 
   const changeValue = (value: any) => {
     setSelectedValue(value);
-    fetchRapports({ ...filter, clientId: value });
+    fetchRapports({ ...filter, clientId: value  });
   };
 
   return (
@@ -52,8 +52,20 @@ const Page = () => {
               value={selectedValue}
               setValue={changeValue}
             />
+
           )}
+           <input
+  type="number"
+  placeholder="Filtrer par vitesse"
+  
+  onChange={(e) =>
+    fetchRapports({ ...filter, clientId: selectedValue  , vitesse: e.target.value })
+  }
+  className="border border-gray-300 rounded px-3 py-2 ml-4"
+/>
         </div>
+
+       
         <DataTable
           columns={columns}
           data={rapports}

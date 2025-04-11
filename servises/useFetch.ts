@@ -17,6 +17,7 @@ type Filter = {
   clientId?: number;
   endDate?: string;
   startDate?: string;
+  vitesse?: number;
 };
 
 type ApiResponse<T> = {
@@ -34,6 +35,7 @@ export function useFetch<T>(url: string) {
     if(filter.clientId) params.append("clientId", String(filter.clientId));
     if(filter.startDate) params.append("startDate", filter.startDate);
     if(filter.endDate) params.append("endDate", filter.endDate);
+    if (filter.vitesse) params.append("vitesse", String(filter.vitesse ?? 0));
 
 
 
