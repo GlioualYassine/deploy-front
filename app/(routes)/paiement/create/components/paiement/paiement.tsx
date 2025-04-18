@@ -60,6 +60,7 @@ const PaymentEntry: React.FC<PaymentEntryProps> = ({ clients }) => {
   const router = useRouter();
 
   const [selectedValue, setSelectedValue] = useState();
+  const [selectedCompany, setSelectedCompany] = useState();
 
   const [filterText, setFilterText] = useState<string>("");
   const [paymentDate, setPaymentDate] = useState<Date>(new Date());
@@ -138,6 +139,31 @@ const PaymentEntry: React.FC<PaymentEntryProps> = ({ clients }) => {
     }
   };
 
+  const handleCompanySelect = async (company: any) => {
+    setSelectedCompany(company);
+    try {
+      const response = await axiosInstance.get(
+        `/gpsDevices/company/${company}`
+      );
+      if (response.status === 200) {
+        const devices = response.data.map((device: any) => ({
+          description: device.imei, // Assuming IMEI is in the 'description' field
+          rate: 0,
+          tva: 20,
+          total: 0,
+        }));
+        setDeviceList(devices);
+      }
+    } catch (error) {
+      console.error("Error fetching client devices:", error);
+      toast({
+        title: "Error fetching devices",
+        description: "Failed to load devices for the selected client.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const addDevice = () => {
     setDeviceList([
       ...deviceList,
@@ -160,7 +186,8 @@ const PaymentEntry: React.FC<PaymentEntryProps> = ({ clients }) => {
   };
 
   const handleSubmit = async () => {
-    if (!selectedValue) {
+    
+    if (!selectedValue && !selectedCompany) {
       toast({
         title: "Veuillez sélectionner un client.",
         description: "Le client est requis pour enregistrer le paiement.",
@@ -195,6 +222,7 @@ const PaymentEntry: React.FC<PaymentEntryProps> = ({ clients }) => {
 
     const payload = {
       clientId: selectedValue,
+      companyId: selectedCompany,
       devices: deviceList.map((device) => ({
         imei: device.description, // Assuming `description` is the IMEI; update if needed
         unitPrice: device.rate,
@@ -284,6 +312,15 @@ const PaymentEntry: React.FC<PaymentEntryProps> = ({ clients }) => {
             fetchUrl="users/clients"
             value={selectedValue}
             setValue={handleClientSelect}
+          />
+        <BaseSelectWithFetch
+            label="Companies"
+            placeholder="Choisir un company"
+            labelOption="nameCompany"
+            valueOption="id"
+            fetchUrl="company/getCompaniesBasicInfo"
+            value={selectedCompany}
+            setValue={handleCompanySelect}
           />
 
           <div>
@@ -434,10 +471,7 @@ const PaymentEntry: React.FC<PaymentEntryProps> = ({ clients }) => {
         </div>
       </CardContent>
       <CardFooter className="flex justify-center">
-        <Button
-          onClick={handleSubmit}
-          className="0 text-white"
-        >
+        <Button onClick={handleSubmit} className="0 text-white">
           Enregistrer le Paiement
         </Button>
       </CardFooter>

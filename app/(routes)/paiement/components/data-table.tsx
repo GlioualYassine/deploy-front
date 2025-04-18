@@ -58,6 +58,7 @@ export function DataTable<TData, TValue>({
   const [isMounted, setIsMounted] = React.useState<boolean>(false);
   const [filter, setFilter] = React.useState({ ...defaultFilter });
   const [selectedValue, setSelectedValue] = React.useState(null);
+  const [selectedCompany, setSelectedCompany] = React.useState(null);
 
   const handleNextPage = async () => {
     if (filter.currentPage < pagination.totalPage) {
@@ -139,10 +140,19 @@ export function DataTable<TData, TValue>({
     setSelectedValue(value);
   };
 
+  const changeCompany = async (value: any) => {
+    await fetch({
+      ...filter,
+      companyId: value,
+    });
+    setSelectedCompany(value);
+  };
+
   return (
     <div className="p-4 bg-background shadow-md rounded-lg mt-4">
       <div className="flex items-center mb-2">
-        {(user.role === "ROLE_GENERAL_ADMIN" || user.role === "ROLE_COMPANY_ADMIN" ) && (
+        {(user.role === "ROLE_GENERAL_ADMIN" ||
+          user.role === "ROLE_COMPANY_ADMIN") && (
           <BaseSelectWithFetch
             placeholder="Choisir un Client"
             labelOption="firstName"
@@ -151,6 +161,19 @@ export function DataTable<TData, TValue>({
             value={selectedValue}
             setValue={changeClient}
           />
+        )}
+
+        {user.role === "ROLE_GENERAL_ADMIN" && (
+          <div className="ml-4">
+          <BaseSelectWithFetch 
+            placeholder="Choisir un company"
+            labelOption="nameCompany"
+            valueOption="id"
+            fetchUrl="company/getCompaniesBasicInfo"
+            value={selectedCompany}
+            setValue={changeCompany}
+          />
+          </div>
         )}
       </div>
       <div className="rounded-md border">

@@ -44,6 +44,7 @@ const CompanyForm = (props: CompanyFormProps) => {
       admin_email: company.admin_email,
       adress: company.adress,
       phone: company.phone,
+      identifiant: company.admin_user_name,
     },
   });
 
@@ -58,6 +59,7 @@ const CompanyForm = (props: CompanyFormProps) => {
         adminLastName: values.admin_last_name,
         adminEmail: values.admin_email,
         password: values.password,
+        identifiant: values.identifiant,
       };
 
       if (company?.id) {
@@ -73,7 +75,9 @@ const CompanyForm = (props: CompanyFormProps) => {
           admin_first_name: values.admin_first_name,
           admin_last_name: values.admin_last_name,
           admin_email: values.admin_email,
-          password : values.password ?? ""
+          password : values.password ?? "",
+          admin_user_name: values.identifiant ?? "",
+
         };
 
         dispatch(modifyCompany(c));
@@ -197,6 +201,20 @@ const CompanyForm = (props: CompanyFormProps) => {
                   </FormItem>
                 )}
               />
+
+<FormField
+                  control={form.control}
+                  name="identifiant"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>User Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="User Name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
 <FormField
                 control={form.control}

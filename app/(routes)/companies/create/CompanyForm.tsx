@@ -47,6 +47,7 @@ const CompanyForm = () => {
       adress: "",
       phone: "",
       password: "",
+      identifiant: "",
     },
   });
 
@@ -60,6 +61,7 @@ const CompanyForm = () => {
         adminLastName: values.admin_last_name,
         adminEmail: values.admin_email,
         password: values.password,
+        identifiant: values.identifiant,
       };
       await axiosInstance.post(`company`, data);
       dispatch(addCompany(values as Company));
@@ -166,6 +168,20 @@ const CompanyForm = () => {
                       <FormLabel>Email de l&apos;Admin</FormLabel>
                       <FormControl>
                         <Input placeholder="admin@example.com" type="email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="identifiant"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>User Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="User Name" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

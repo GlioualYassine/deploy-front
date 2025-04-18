@@ -36,7 +36,6 @@ const formSchema = z.object({
   lastName: z.string().min(2).max(255),
   password: z.string().min(6),
   email: z.string().min(6),
-  companyId: z.string().nullable(),
   identifiant: z.string().min(2).max(255),
 });
 
@@ -50,7 +49,7 @@ const FormCreateAutomobile = (props: FormCreateClientProps) => {
     const fetchCompanies = async () => {
       try {
         const response = await axiosInstance.get(
-          "company/getCompaniesBasicInfo"
+          "users/clients"
         );
         console.log(response.data);
         setCompanies(response.data);
@@ -71,7 +70,6 @@ const FormCreateAutomobile = (props: FormCreateClientProps) => {
       firstName: "",
       lastName: "",
       email: "",
-      companyId: "",
       password: "",
       identifiant: ""
     },
@@ -82,15 +80,14 @@ const FormCreateAutomobile = (props: FormCreateClientProps) => {
   // Define the submit handler for the form
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values);
-    let { firstName, lastName, email, companyId,password , identifiant } = values;
-    const parsedCompanyId = parseInt(companyId as string);
+    let { firstName, lastName, email,password , identifiant } = values;
+
     try {
       const response = await axiosInstance.post("users/clients", {
         firstName,
         lastName,
         email,
         identifiant,
-        companyId: parsedCompanyId,
         password
       });
       console.log(response.data);
@@ -105,9 +102,9 @@ const FormCreateAutomobile = (props: FormCreateClientProps) => {
           lastName: lastName,
           email: email,
           password: password,
-          companyId: companyId as string,
           role: response.data.role,
           companyName: response.data.companyName,
+          companyId: response.data.companyId,
         })
       );
       router.refresh();
@@ -197,44 +194,6 @@ const FormCreateAutomobile = (props: FormCreateClientProps) => {
               </FormItem>
             )}
           />
-
-         { user.role === "ROLE_GENERAL_ADMIN" && 
-         
-         <FormField
-            control={form.control}
-            name="companyId"
-            render={({ field }: { field: any }) => (
-              <FormItem>
-                <FormLabel>Entreprise </FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  // Set the default value of the select input
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selectionner une entreprise" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Entreprise</SelectLabel>
-                      {companies.map((company) => (
-                        <SelectItem
-                          key={company.id}
-                          value={company.id.toString()}
-                        >
-                          {company.nameCompany}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />}
-
 
         </div>
         <Button className="mt-3 w-full" type="submit" disabled={!isValid}>

@@ -19,16 +19,16 @@ const HeaderClients = () => {
 
   return (
     <div className="flex justify-between items-center ">
-      <h2 className="text-2xl">Liste des Clients</h2>
-      {user.role != "ROLE_SUB_USER" && ( <Dialog open={openModalCreate} onOpenChange={setOpenModalCreate}>
+      <h2 className="text-2xl">Liste des sous clients</h2>
+      {user.role == "ROLE_USER" && ( <Dialog open={openModalCreate} onOpenChange={setOpenModalCreate}>
         <DialogTrigger asChild>
-          <Button>Créer Client</Button>
+          <Button>Créer un sous client</Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[625px]">
           <DialogHeader>
-            <DialogTitle>Créer Client</DialogTitle>
+            <DialogTitle>Créer un sous client</DialogTitle>
             <DialogDescription>
-              Créer et configurer un nouveau Client
+              Créer et configurer un nouveau sous client.
             </DialogDescription>
           </DialogHeader>
           <FormCreateAutomobile setOPenModalCreate={setOpenModalCreate} />

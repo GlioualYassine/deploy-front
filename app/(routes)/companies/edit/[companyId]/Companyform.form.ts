@@ -9,4 +9,5 @@ export const formSchema = z.object({
     password : z.string().min(8).optional(),
     adress : z.string().optional(),
     phone : z.string().optional(),
+    identifiant : z.string().optional(),
 })

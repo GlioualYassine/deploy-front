@@ -103,11 +103,14 @@ export const columns: ColumnDef<Company>[] = [
     },
     cell: ({ row }) => {
       const nom: String = row.original?.admin_last_name;
-      return <div className="text-start ml-4 font-medium text-xs">{nom}</div>;
+      const prenom: String = row.original?.admin_first_name;
+      return <div className="text-start ml-4 font-medium text-xs">
+        {nom} {prenom && ` ${prenom}`}
+        </div>;
     },
   },
   {
-    accessorKey: "admin_first_name",
+    accessorKey: "admin_user_name",
     header: ({ column }) => {
       return (
         <Button
@@ -120,9 +123,13 @@ export const columns: ColumnDef<Company>[] = [
       );
     },
     cell: ({ row }) => {
-      const prenom: String = row.original?.admin_first_name;
+      const userName: String = row.original?.admin_user_name;
+      const email: String = row.original?.admin_email;
       return (
-        <div className="text-start ml-4 font-medium text-xs">{prenom}</div>
+        <div className="text-start ml-4 font-medium text-xs">
+          {userName} 
+          <div>{email}</div>
+         </div>
       );
     },
   },

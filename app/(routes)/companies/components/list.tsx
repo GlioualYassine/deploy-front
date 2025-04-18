@@ -36,6 +36,7 @@ const ListCompanies = () => {
         admin_first_name: c.admin.firstName,
         admin_last_name: c.admin.lastName,
         admin_email: c.admin.email,
+        admin_user_name: c.admin.identifiant,
         admin_id: c.admin.id,
         adress: c.address,
         phone: c.phone,

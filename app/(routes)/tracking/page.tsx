@@ -11,7 +11,9 @@ import { format } from "date-fns";
 import dynamic from "next/dynamic";
 
 // Dynamically import the MapComponent with no SSR
-const MapComponent = dynamic(() => import("./components/Map/MapPage"), { ssr: false });
+const MapComponent = dynamic(() => import("./components/Map/MapPage"), {
+  ssr: false,
+});
 
 const Page = () => {
   const user = useSelector(selectUser);
@@ -19,6 +21,7 @@ const Page = () => {
   const [apapreils, setApapreils] = useState<Record<string, string>[]>([]);
   const [selectedValue, setSelectedValue] = useState();
   const [selectedClient, setSelectedClient] = useState();
+  const [selectedCompany, setSelectedCompany] = useState();
   const [history, setHistory] = useState<any>([]);
   const [date, setDate] = useState({ from: undefined, to: undefined });
 
@@ -38,9 +41,26 @@ const Page = () => {
   const selectedData = (data: any) => {
     setSelectedClient(data);
     if (data == null) {
-      fetchData(`/gpsDevices/all`);
+      if (selectedCompany == null) {
+        fetchData(`/gpsDevices/all`);
+      } else {
+        fetchData(`/gpsDevices/company/${selectedCompany}`);
+      }
     } else {
       fetchData(`/gpsDevices/user/${data}`);
+    }
+  };
+
+  const companySelected = (data: any) => {
+    setSelectedCompany(data);
+    if (data == null) {
+      if (selectedClient == null) {
+        fetchData(`/gpsDevices/all`);
+      } else {
+        fetchData(`/gpsDevices/user/${selectedClient}`);
+      }
+    } else {
+      fetchData(`/gpsDevices/company/${data}`);
     }
   };
 
@@ -78,6 +98,17 @@ const Page = () => {
           />
         )}
 
+        {user.role === "ROLE_GENERAL_ADMIN" && (
+          <BaseSelectWithFetch
+            placeholder="Choisir un company"
+            labelOption="nameCompany"
+            valueOption="id"
+            fetchUrl="company/getCompaniesBasicInfo"
+            value={selectedCompany}
+            setValue={companySelected}
+          />
+        )}
+
         <BaseSelectWithFetch
           placeholder="Choisir un Appareil"
           labelOption="nom"
@@ -95,7 +126,11 @@ const Page = () => {
       </div>
 
       <div className="flex flex-col gap-2 w-full h-[80vh] relative">
-        <MapComponent apapreils={apapreils} history={history}   selectedValue={selectedValue || ""} />
+        <MapComponent
+          apapreils={apapreils}
+          history={history}
+          selectedValue={selectedValue || ""}
+        />
       </div>
     </div>
   );

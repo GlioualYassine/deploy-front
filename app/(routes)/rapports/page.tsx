@@ -54,7 +54,7 @@ const Page = () => {
             />
 
           )}
-           <input
+           {/* <input
   type="number"
   placeholder="Filtrer par vitesse"
   
@@ -62,7 +62,7 @@ const Page = () => {
     fetchRapports({ ...filter, clientId: selectedValue  , vitesse: e.target.value })
   }
   className="border border-gray-300 rounded px-3 py-2 ml-4"
-/>
+/> */}
         </div>
 
        

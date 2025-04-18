@@ -15,6 +15,7 @@ type Filter = {
   size?: number;
   currentPage?: number;
   clientId?: number;
+  companyId?: number;
   endDate?: string;
   startDate?: string;
   vitesse?: number;
@@ -33,6 +34,7 @@ export function useFetch<T>(url: string) {
     if (filter.currentPage ?? 1)
       params.append("currentPage", String(filter.currentPage));
     if(filter.clientId) params.append("clientId", String(filter.clientId));
+    if(filter.companyId) params.append("companyId", String(filter.companyId));
     if(filter.startDate) params.append("startDate", filter.startDate);
     if(filter.endDate) params.append("endDate", filter.endDate);
     if (filter.vitesse) params.append("vitesse", String(filter.vitesse ?? 0));

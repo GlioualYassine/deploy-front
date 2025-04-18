@@ -13,6 +13,7 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -30,79 +31,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Pagination } from "@/typs/pagination";
-import { defaultFilter } from "@/typs/filter";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  pagination: Pagination;
-  fetch: (filter: any) => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  pagination,
-  fetch,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [sorting, setSorting] = React.useState<SortingState>([
+    { id: "id", desc: false }, // Sorting by ID column initially in ascending order
+  ]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
 
   const [isMounted, setIsMounted] = React.useState<boolean>(false);
-  const [filter, setFilter] = React.useState({ ...defaultFilter });
-  const [selectedValue, setSelectedValue] = React.useState("");
-
-  const handleNextPage = async () => {
-    if (filter.currentPage < pagination.totalPage) {
-      await fetch({
-        ...filter,
-        currentPage: filter.currentPage + 1,
-      });
-
-      setFilter({
-        ...filter,
-        currentPage: filter.currentPage + 1,
-      });
-    }
-  };
-
-  const handlePreviousPage = async () => {
-    if (filter.currentPage > 1) {
-      await fetch({
-        ...filter,
-        currentPage: filter.currentPage - 1,
-      });
-      setFilter({
-        ...filter,
-        currentPage: filter.currentPage - 1,
-      });
-    }
-  };
-
-  const changesize = async (size: any) => {
-    await fetch({
-      ...filter,
-      size: size,
-    });
-    setFilter({
-      ...filter,
-      size: size,
-    });
-  };
-
-  const handleFilter = async (value: string) => {
-    await fetch({
-      ...filter,
-      globalSearch: value,
-    });
-    setFilter({
-      ...filter,
-      globalSearch: value,
-    });
-  };
 
   React.useEffect(() => {
     setIsMounted(true);
@@ -117,23 +63,49 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
-    initialState: {
-      pagination: {
-        pageSize: filter.size ?? 10,
-      },
-    },
     state: {
       sorting,
       columnFilters,
     },
   });
 
+  const [Filter, setFilter] = React.useState<string>("firstName");
+
   if (!isMounted) {
     return null;
   }
 
   return (
-    <div >
+    <div className="p-4 bg-background shadow-md rounded-lg mt-4">
+      <div className="flex items-center gap-x-3 mb-2">
+        <Input
+          placeholder={`Rechercher par ${Filter}`}
+          value={
+            (table.getColumn(`${Filter}`)?.getFilterValue() as string) ?? ""
+          }
+          onChange={(event) => {
+            console.log(`Filtering by ${Filter}`); // Log the filter being applied
+            table.getColumn(`${Filter}`)?.setFilterValue(event.target.value);
+          }}
+        />
+
+        <Select
+          defaultValue={Filter}
+          onValueChange={(value) => setFilter(value)}
+        >
+          <SelectTrigger className="w-1/2">
+            <SelectValue placeholder="Selectionner un Filtre" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Filtres</SelectLabel>
+              <SelectItem value="firstName">Prénom</SelectItem>
+              <SelectItem value="lastName">Nom</SelectItem>
+              <SelectItem value="companyName">Entreprise</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -183,26 +155,11 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-        <Select onValueChange={(value) => changesize(value)}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder={filter.size} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="5">5</SelectItem>
-              <SelectItem value="10">10</SelectItem>
-              <SelectItem value="25">25</SelectItem>
-              <SelectItem value="50">50</SelectItem>
-              <SelectItem value="100">100</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-
         <Button
           variant="outline"
           size="sm"
-          onClick={() => handlePreviousPage()}
-          disabled={filter.currentPage === 1}
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
         >
           Previous
         </Button>
@@ -210,8 +167,8 @@ export function DataTable<TData, TValue>({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => handleNextPage()}
-          disabled={filter.currentPage === pagination?.totalPage}
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
         >
           Next
         </Button>

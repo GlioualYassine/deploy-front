@@ -68,7 +68,6 @@ const ClientInformations = (props: { utilisateur: UtilisateurProp }) => {
       lastName: utilisateur.lastName,
       email: utilisateur.email,
       role: utilisateur.role,
-      companyId: utilisateur.companyId?.toString(),
       companyName: company ? company.name : null,
       identifiant: utilisateur.identifiant,
      
@@ -76,7 +75,7 @@ const ClientInformations = (props: { utilisateur: UtilisateurProp }) => {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    let { id, firstName, lastName, email, role, companyId } = values;
+    let { id, firstName, lastName, email, role } = values;
 
     try {
       await axiosInstance.put(`users/${id}`, {
@@ -84,7 +83,6 @@ const ClientInformations = (props: { utilisateur: UtilisateurProp }) => {
         lastName,
         email,
         role,
-        companyId,
         password: values.password,
         identifiant: values.identifiant,
       });

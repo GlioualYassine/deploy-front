@@ -27,8 +27,10 @@ const SidebarRoutes = () => {
   let GeneralSidebar =
     user.role === "ROLE_GENERAL_ADMIN"
       ? dataGeneralSidebar
+      : user.role === "ROLE_COMPANY_ADMIN"
+      ? dataGeneralSidebar.filter((item) => item.label != "Entreprises")
       : dataGeneralSidebar.filter(
-          (item) => item.label != "Utilisateurs" && item.label != "Entreprises"
+          (item) => item.label != "Entreprises" && item.label != "Utilisateurs"
         );
 
   return (

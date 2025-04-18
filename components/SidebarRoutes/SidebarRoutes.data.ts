@@ -39,6 +39,7 @@ export const dataGeneralSidebar = [
     label: "Utilisateurs",
     href: "/utilisateurs",
   },
+  
   {
     icon: SmartphoneNfc,
     label: "Appareils",

@@ -82,10 +82,10 @@ const MapComponent: React.FC<MapComponentProps> = ({
   const { MapContainer, TileLayer, Marker, Popup } = MapComponents;
 
   return (
-    <MapContainer
-      center={[35.7632743, -5.8344698]}
-      zoom={10}
-      style={{ height: "100vh", width: "100%", zIndex: 0 }}
+    <MapContainer 
+    center={[31.9108605,-14.1978022]}
+    zoom={5}
+    style={{ height: "100vh", width: "100%" , zIndex: 0}}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

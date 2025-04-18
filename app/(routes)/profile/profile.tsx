@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import axiosInstance from "@/lib/axiosInstance";
 import { id } from "date-fns/locale";
+import { toast } from "@/components/ui/use-toast";
 
 const Profile = () => {
   const [user, setUser] = useState({
@@ -32,60 +33,40 @@ const Profile = () => {
     }
   }, []);
 
-  const validatePassword = (password:any) => {
-    if (password.length < 8) {
-      return "Le mot de passe doit contenir au moins 8 caractères.";
-    }
-    return "";
-  };
-
-  const validateConfirmPassword = (password:string, confirmPassword:string) => {
-    if (confirmPassword && password !== confirmPassword) {
-      return "Les mots de passe ne correspondent pas.";
-    }
-    return "";
-  };
-
-  const handlePasswordChange = (e:any) => {
-    const newPassword = e.target.value;
-    setUser({ ...user, password: newPassword });
-
-    const passwordError = validatePassword(newPassword);
-    const confirmPasswordError = validateConfirmPassword(newPassword, user.confirmPassword);
-
-    setErrors({ password: passwordError, confirmPassword: confirmPasswordError });
-  };
-
-  const handleConfirmPasswordChange = (e:any) => {
-    const newConfirmPassword = e.target.value;
-    setUser({ ...user, confirmPassword: newConfirmPassword });
-
-    const confirmPasswordError = validateConfirmPassword(user.password, newConfirmPassword);
-    setErrors((prev) => ({ ...prev, confirmPassword: confirmPasswordError }));
-  };
-
   const handleSubmit = async () => {
-    // Vérification de l'absence d'erreurs
-    if (!errors.password && !errors.confirmPassword) {
-      try {
-        // Envoi des données via axios (utilise l'endpoint approprié pour l'édition)
-        const response = await axiosInstance.put("users/"+user.id, user); 
+    if (user.password !== user.confirmPassword) {
+      setErrors({
+        password: "Les mots de passe ne correspondent pas.",
+        confirmPassword: "Les mots de passe ne correspondent pas.",
+      });
+      return;
+    }
 
-        if (response.status === 200) {
-          // Mise à jour locale de l'utilisateur après une réponse réussie
-          localStorage.setItem("user", JSON.stringify(response.data)); // Si l'API retourne les nouvelles données utilisateur
-          setUser(response.data);
+    try {
+      const response = await axiosInstance.put("users/" + user.id, user);
 
-          alert("Les informations de l'utilisateur ont été mises à jour avec succès.");
-        } else {
-          alert("Une erreur est survenue lors de la mise à jour.");
-        }
-      } catch (error) {
-        console.error("Erreur lors de la mise à jour des données:", error);
-        alert("Impossible de mettre à jour. Veuillez réessayer.");
+      if (response.status === 200) {
+        // Mise à jour locale de l'utilisateur après une réponse réussie
+        localStorage.setItem("user", JSON.stringify(response.data)); // Si l'API retourne les nouvelles données utilisateur
+        setUser(response.data);
+        toast({
+          title: "Succès",
+          description: "Vos informations ont été mises à jour avec succès.",
+        });
+      } else {
+        toast({
+          title: "Erreur",
+          description: "Impossible de mettre à jour vos informations.",
+          variant: "destructive",
+        });
       }
-    } else {
-      alert("Veuillez corriger les erreurs avant de soumettre.");
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour des données:", error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur s'est produite lors de la mise à jour.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -95,7 +76,7 @@ const Profile = () => {
         <CardHeader>
           <div className="flex items-center space-x-4">
             <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" />
+              <AvatarImage src="/avatar.jpg" />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
             <div>
@@ -114,7 +95,9 @@ const Profile = () => {
                 id="firstName"
                 type="text"
                 value={user.firstName}
-                onChange={(e) => setUser({ ...user, firstName: e.target.value })}
+                onChange={(e) =>
+                  setUser({ ...user, firstName: e.target.value })
+                }
                 className="mt-1"
                 placeholder="Entrez votre prénom"
               />
@@ -160,17 +143,33 @@ const Profile = () => {
                   id="password"
                   type="password"
                   value={user.password}
-                  onChange={handlePasswordChange}
+                  onChange={(e) => {
+                    setUser({ ...user, password: e.target.value });
+                    if (e.target.value.length < 8) {
+                      setErrors({
+                        ...errors,
+                        password:
+                          "Le mot de passe doit contenir au moins 8 caractères.",
+                      });
+                    } else {
+                      setErrors({ ...errors, password: "" });
+                    }
+                  }}
                   className="mt-1"
                   placeholder="Entrez votre mot de passe"
                 />
-                {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+                {errors.password && (
+                  <p className="text-red-500 text-sm">{errors.password}</p>
+                )}
               </div>
             </div>
 
             {/* Confirmation du mot de passe */}
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium">
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium"
+              >
                 Confirmer le mot de passe
               </label>
               <div className="relative">
@@ -178,12 +177,25 @@ const Profile = () => {
                   id="confirmPassword"
                   type="password"
                   value={user.confirmPassword}
-                  onChange={handleConfirmPasswordChange}
+                  onChange={(e) => {
+                    setUser({ ...user, confirmPassword: e.target.value });
+                    if (e.target.value !== user.password) {
+                      setErrors({
+                        ...errors,
+                        confirmPassword:
+                          "Les mots de passe ne correspondent pas.",
+                      });
+                    } else {
+                      setErrors({ ...errors, confirmPassword: "" });
+                    }
+                  }}
                   className="mt-1"
                   placeholder="Confirmer votre mot de passe"
                 />
                 {errors.confirmPassword && (
-                  <p className="text-red-500 text-sm">{errors.confirmPassword}</p>
+                  <p className="text-red-500 text-sm">
+                    {errors.confirmPassword}
+                  </p>
                 )}
               </div>
             </div>

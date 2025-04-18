@@ -37,6 +37,7 @@ export const adminRoutes = [
 ];
 
 export const nonAdminRoutes = [
+  "/utilisateurs",
   "/appareils",
   "/paiement",
   "/rapports",
