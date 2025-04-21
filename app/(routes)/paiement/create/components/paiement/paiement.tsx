@@ -314,8 +314,8 @@ const PaymentEntry: React.FC<PaymentEntryProps> = ({ clients }) => {
             setValue={handleClientSelect}
           />
         <BaseSelectWithFetch
-            label="Companies"
-            placeholder="Choisir un company"
+            label="Entreprise"
+            placeholder="Choisir un entreprise"
             labelOption="nameCompany"
             valueOption="id"
             fetchUrl="company/getCompaniesBasicInfo"

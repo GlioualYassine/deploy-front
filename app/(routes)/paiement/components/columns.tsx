@@ -124,7 +124,7 @@ export const columns: ColumnDef<Payment>[] = [
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
-        état de paiement
+        Etat de paiement
         <ArrowUpDown className="mh-2 h-4 ml-2" />
       </Button>
     ),

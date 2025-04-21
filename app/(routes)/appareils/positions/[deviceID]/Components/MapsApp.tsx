@@ -73,6 +73,7 @@ function MapsApp({ imei }: { imei: string }) {
       if (response && response.data) {
         setHistoryEvents(response.data);
         setTotalPages(response.pagination?.totalPage || 1);
+        handleEventClick(response.data[0]);
       }
     } catch (error) {
       console.error("Erreur lors de la récupération des historiques :", error);
@@ -100,9 +101,9 @@ function MapsApp({ imei }: { imei: string }) {
       {/* Map Section */}
       <div className="flex-grow h-[50vh] md:h-full relative">
         <MapContainer
-          center={[35.7632743, -5.8344698]}
-          zoom={10}
-          style={{ height: "100vh", width: "100%", zIndex: 0 }}
+          center={[31.9108605,-14.1978022]}
+          zoom={5}
+          style={{ height: "100vh", width: "100%" , zIndex: 0}} 
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

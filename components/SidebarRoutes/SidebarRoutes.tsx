@@ -37,14 +37,14 @@ const SidebarRoutes = () => {
     <div className="flex flex-col mt-2 justify-between h-full">
       <div>
         <div className="p-2 md:p-6">
-          <p className="text-slate-500 mb-2">GENERAL</p>
+          <p className="text-slate-500 mb-2 text-white">GENERAL</p>
           {GeneralSidebar.map((item) => (
             <SidebarItem key={item.label} item={item} />
           ))}
         </div>
         <Separator />
         <div className="p-2 md:p-6">
-          <p className="text-slate-500 mb-2">TOOLS</p>
+          <p className="text-slate-500 mb-2 text-white">TOOLS</p>
           {dataToolsSidebar.map((item) => (
             <SidebarItem key={item.label} item={item} />
           ))}

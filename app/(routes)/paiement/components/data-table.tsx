@@ -166,7 +166,7 @@ export function DataTable<TData, TValue>({
         {user.role === "ROLE_GENERAL_ADMIN" && (
           <div className="ml-4">
           <BaseSelectWithFetch 
-            placeholder="Choisir un company"
+            placeholder="Choisir un entreprise"
             labelOption="nameCompany"
             valueOption="id"
             fetchUrl="company/getCompaniesBasicInfo"
