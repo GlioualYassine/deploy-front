@@ -101,9 +101,9 @@ function MapsApp({ imei }: { imei: string }) {
       {/* Map Section */}
       <div className="flex-grow h-[50vh] md:h-full relative">
         <MapContainer
-          center={[31.9108605,-14.1978022]}
+          center={[31.9108605, -14.1978022]}
           zoom={5}
-          style={{ height: "100vh", width: "100%" , zIndex: 0}} 
+          style={{ height: "100vh", width: "100%", zIndex: 0 }}
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -115,8 +115,22 @@ function MapsApp({ imei }: { imei: string }) {
               position={[
                 parseFloat(event.latitude),
                 parseFloat(event.longitude),
-              ]}
-              icon={coloredIcon(event.speed === "0" ? "red" : "green")}
+              ]} 
+              icon={coloredIcon(
+                parseFloat(event.speed) > 120
+                  ? "#35d7ca"
+                  : parseFloat(event.speed) > 100
+                  ? "#71b0ff"
+                  : parseFloat(event.speed) > 80
+                  ? "#bee131"
+                  : parseFloat(event.speed) > 60
+                  ? "#54c254"
+                  : parseFloat(event.speed) > 5
+                  ? "#f7f301"
+                  : event.speed > "0"
+                  ? "red"
+                  : "blue"
+              )}
               ref={(marker) => {
                 if (marker) {
                   markerRefs.current[event.id] = marker;
@@ -169,9 +183,9 @@ function MapsApp({ imei }: { imei: string }) {
 
       {/* History Section */}
       <div className="w-full h-[50vh] md:h-full border-t md:border-t-0 md:w-1/4 flex flex-col">
-      <h4 className=" p-4 mb-0 text-sm font-medium text-gray-600">
-              Les Historiques
-            </h4>
+        <h4 className=" p-4 mb-0 text-sm font-medium text-gray-600">
+          Les Historiques
+        </h4>
         <ScrollArea className="flex-grow h-full overflow-auto">
           <div className="p-4">
             {historyEvents.map((event) => (
@@ -221,7 +235,7 @@ function MapsApp({ imei }: { imei: string }) {
               Suivant
             </Button>
           </div>
-          </div>
+        </div>
       </div>
     </div>
   );

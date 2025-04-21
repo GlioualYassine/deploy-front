@@ -82,10 +82,10 @@ const MapComponent: React.FC<MapComponentProps> = ({
   const { MapContainer, TileLayer, Marker, Popup } = MapComponents;
 
   return (
-    <MapContainer 
-    center={[31.9108605,-14.1978022]}
-    zoom={5}
-    style={{ height: "100vh", width: "100%" , zIndex: 0}}
+    <MapContainer
+      center={[31.9108605, -14.1978022]}
+      zoom={5}
+      style={{ height: "100vh", width: "100%", zIndex: 0 }}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -110,11 +110,27 @@ const MapComponent: React.FC<MapComponentProps> = ({
         <Marker
           key={marker.id}
           position={[marker.latitude, marker.longitude]}
-          icon={coloredIcon(marker.deviceConnected ? "green" : "red")}
+          icon={coloredIcon(
+            parseFloat(marker.speed) > 120
+              ? "#35d7ca"
+              : parseFloat(marker.speed) > 100
+              ? "#71b0ff"
+              : parseFloat(marker.speed) > 80
+              ? "#bee131"
+              : parseFloat(marker.speed) > 60
+              ? "#54c254"
+              : parseFloat(marker.speed) > 5
+              ? "#f7f301"
+              : parseFloat(marker.speed) > 0
+              ? "red"
+              : "blue")
+          }
         >
           <Popup>
             <div className="text-center">
               <span className="text-xs font-semibold">{marker.imei}</span>
+              <br />
+              <span className="text-xs font-semibold">{marker.speed} Km/h</span>
             </div>
           </Popup>
         </Marker>
