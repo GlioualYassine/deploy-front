@@ -7,11 +7,19 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useFetch } from "@/servises/useFetch";
 import { defaultFilter } from "@/typs/filter";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMap,
+  Polyline,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { Icon } from "leaflet";
 import "./MapsApp.css";
 import { CircleGauge, Clock9, MapPin } from "lucide-react";
+import moment from "moment";
 
 export interface Historique {
   id: number;
@@ -105,6 +113,16 @@ function MapsApp({ imei }: { imei: string }) {
           zoom={5}
           style={{ height: "100vh", width: "100%", zIndex: 0 }}
         >
+          {historyEvents.length > 1 && (
+            <Polyline
+              positions={historyEvents.map((pos: any) => [
+                pos.latitude,
+                pos.longitude,
+              ])}
+              pathOptions={{ color: "blue", weight: 2 }}
+            />
+          )}
+
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -115,7 +133,7 @@ function MapsApp({ imei }: { imei: string }) {
               position={[
                 parseFloat(event.latitude),
                 parseFloat(event.longitude),
-              ]} 
+              ]}
               icon={coloredIcon(
                 parseFloat(event.speed) > 120
                   ? "#35d7ca"
@@ -159,7 +177,12 @@ function MapsApp({ imei }: { imei: string }) {
                     <div className="text-xs">
                       <CircleGauge className="inline mr-2  " />
                       {event.speed === "0" ? (
-                        <span className="text-red-500">{event.speed} km/h</span>
+                        <span className="text-red-500">
+                          {event.speed} km/h -{" "}
+                          {moment(event?.timestamp).format(
+                            "YYYY-MM-DD HH:mm:ss"
+                          )}
+                        </span>
                       ) : (
                         <span>{event.speed} km/h</span>
                       )}

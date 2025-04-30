@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { Icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { Polyline } from "react-leaflet";
+import moment from "moment";
 
 const FlyToMarker = dynamic(
   () => import("../../../../components/map/FlyToMarker"),
@@ -87,6 +89,13 @@ const MapComponent: React.FC<MapComponentProps> = ({
       zoom={5}
       style={{ height: "100vh", width: "100%", zIndex: 0 }}
     >
+      {history.length > 1 && (
+        <Polyline
+          positions={history.map((pos: any) => [pos.latitude, pos.longitude])}
+          pathOptions={{ color: "blue", weight: 2 }}
+        />
+      )}
+
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -123,14 +132,14 @@ const MapComponent: React.FC<MapComponentProps> = ({
               ? "#f7f301"
               : parseFloat(marker.speed) > 0
               ? "red"
-              : "blue")
-          }
+              : "blue"
+          )}
         >
           <Popup>
             <div className="text-center">
               <span className="text-xs font-semibold">{marker.imei}</span>
               <br />
-              <span className="text-xs font-semibold">{marker.speed} Km/h</span>
+              <span className="text-xs font-semibold">{marker.speed} Km/h  -  {moment(marker?.timestamp).format('YYYY-MM-DD HH:mm:ss')}</span>
             </div>
           </Popup>
         </Marker>
