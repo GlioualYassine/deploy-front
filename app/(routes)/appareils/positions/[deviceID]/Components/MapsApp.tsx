@@ -20,6 +20,7 @@ import { Icon } from "leaflet";
 import "./MapsApp.css";
 import { CircleGauge, Clock9, MapPin } from "lucide-react";
 import moment from "moment";
+import L from "leaflet";
 
 export interface Historique {
   id: number;
@@ -32,16 +33,34 @@ export interface Historique {
 
 const defaultPosition = { lat: 35.76185321080379, lng: -5.836189754217148 };
 
-const coloredIcon = (color: string = "blue") =>
-  new Icon({
-    iconUrl: `data:image/svg+xml;base64,${btoa(` 
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${color}" width="25" height="41">
-        <path d="M12 0C8.13 0 5 3.13 5 7c0 4.9 7 17 7 17s7-12.1 7-17c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 4.5 12 4.5s2.5 1.12 2.5 2.5S13.38 9.5 12 9.5z" />
-      </svg>
-    `)}`,
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [0, -41],
+const createArrowIcon = (color: string, rotation: number) =>
+  L.divIcon({
+    className: "",
+    html: `
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
+          <defs>
+            <filter id="arrowShadow" x="-50%" y="-50%" width="200%" height="200%">
+              <feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#000" flood-opacity="0.4"/>
+            </filter>
+          </defs>
+  
+          <!-- Marker shape without inner circle -->
+          <path fill="${color}" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+  
+          <!-- Fancy arrow with rotation and shadow -->
+          <g transform="rotate(${rotation}, 12, 12)" filter="url(#arrowShadow)">
+            <path 
+              d="M12 6l-3 6h2v6h2v-6h2z" 
+              fill="#ffffff" 
+              stroke="#333" 
+              stroke-width="0.8"
+              stroke-linejoin="round"
+            />
+          </g>
+        </svg>
+      `,
+    iconSize: [40, 40],
+    iconAnchor: [20, 40], // bottom center anchor
   });
 
 function FlyToMarker({
@@ -104,6 +123,25 @@ function MapsApp({ imei }: { imei: string }) {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
+  function calculateBearing(
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number
+  ): number {
+    const toRad = (deg: number) => (deg * Math.PI) / 180;
+    const toDeg = (rad: number) => (rad * 180) / Math.PI;
+
+    const y = Math.sin(toRad(lon2 - lon1)) * Math.cos(toRad(lat2));
+    const x =
+      Math.cos(toRad(lat1)) * Math.sin(toRad(lat2)) -
+      Math.sin(toRad(lat1)) *
+        Math.cos(toRad(lat2)) *
+        Math.cos(toRad(lon2 - lon1));
+    const brng = Math.atan2(y, x);
+    return (toDeg(brng) + 360) % 360;
+  }
+
   return (
     <div className="flex flex-col gap-4 w-full h-full md:flex-row">
       {/* Map Section */}
@@ -127,71 +165,84 @@ function MapsApp({ imei }: { imei: string }) {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
-          {historyEvents.map((event) => (
-            <Marker
-              key={event.id}
-              position={[
-                parseFloat(event.latitude),
-                parseFloat(event.longitude),
-              ]}
-              icon={coloredIcon(
-                parseFloat(event.speed) > 120
-                  ? "#35d7ca"
-                  : parseFloat(event.speed) > 100
-                  ? "#71b0ff"
-                  : parseFloat(event.speed) > 80
-                  ? "#bee131"
-                  : parseFloat(event.speed) > 60
-                  ? "#54c254"
-                  : parseFloat(event.speed) > 5
-                  ? "#f7f301"
-                  : event.speed > "0"
-                  ? "red"
-                  : "blue"
-              )}
-              ref={(marker) => {
-                if (marker) {
-                  markerRefs.current[event.id] = marker;
-                }
-              }}
-            >
-              <Popup className="p-0 bg-gray-50 rounded-lg shadow hover:shadow-lg transition-shadow">
-                <Card
-                  key={event.id}
-                  className=" mb-0 bg-transparent border-0 shadow-none cursor-pointer"
-                  onClick={() => handleEventClick(event)}
-                >
-                  <div className="flex flex-col space-y-2">
-                    <div className="text-xs font-semibold">
-                      <MapPin className="inline mr-2" />
-                      IMEI: {event.imei}
-                    </div>
-                    <div className="text-xs">
-                      <Clock9 className="inline mr-2" />
+          {historyEvents.map((event: any, index: number) => {
+            const prev = historyEvents[index - 1];
+            const bearing = prev
+              ? calculateBearing(
+                  event.latitude,
+                  event.longitude,
+                  parseFloat(prev.latitude),
+                  parseFloat(prev.longitude)
+                )
+              : 0;
 
-                      {format(
-                        new Date(event.timestamp),
-                        "dd MMM yyyy, HH:mm:ss"
-                      )}
+            const color =
+              parseFloat(event.speed) > 120
+                ? "#35d7ca"
+                : parseFloat(event.speed) > 100
+                ? "#71b0ff"
+                : parseFloat(event.speed) > 80
+                ? "#bee131"
+                : parseFloat(event.speed) > 60
+                ? "#54c254"
+                : parseFloat(event.speed) > 5
+                ? "#f7f301"
+                : parseFloat(event.speed) > 0
+                ? "red"
+                : "blue";
+
+            return (
+              <Marker
+                key={event.id}
+                position={[
+                  parseFloat(event.latitude),
+                  parseFloat(event.longitude),
+                ]}
+                icon={createArrowIcon(color, bearing)}
+                ref={(marker) => {
+                  if (marker) {
+                    markerRefs.current[event.id] = marker;
+                  }
+                }}
+              >
+                <Popup className="p-0 bg-gray-50 rounded-lg shadow hover:shadow-lg transition-shadow">
+                  <Card
+                    key={event.id}
+                    className=" mb-0 bg-transparent border-0 shadow-none cursor-pointer"
+                    onClick={() => handleEventClick(event)}
+                  >
+                    <div className="flex flex-col space-y-2">
+                      <div className="text-xs font-semibold">
+                        <MapPin className="inline mr-2" />
+                        IMEI: {event.imei}
+                      </div>
+                      <div className="text-xs">
+                        <Clock9 className="inline mr-2" />
+
+                        {format(
+                          new Date(event.timestamp),
+                          "dd MMM yyyy, HH:mm:ss"
+                        )}
+                      </div>
+                      <div className="text-xs">
+                        <CircleGauge className="inline mr-2  " />
+                        {event.speed === "0" ? (
+                          <span className="text-red-500">
+                            {event.speed} km/h -{" "}
+                            {moment(event?.timestamp).format(
+                              "YYYY-MM-DD HH:mm:ss"
+                            )}
+                          </span>
+                        ) : (
+                          <span>{event.speed} km/h</span>
+                        )}
+                      </div>
                     </div>
-                    <div className="text-xs">
-                      <CircleGauge className="inline mr-2  " />
-                      {event.speed === "0" ? (
-                        <span className="text-red-500">
-                          {event.speed} km/h -{" "}
-                          {moment(event?.timestamp).format(
-                            "YYYY-MM-DD HH:mm:ss"
-                          )}
-                        </span>
-                      ) : (
-                        <span>{event.speed} km/h</span>
-                      )}
-                    </div>
-                  </div>
-                </Card>
-              </Popup>
-            </Marker>
-          ))}
+                  </Card>
+                </Popup>
+              </Marker>
+            );
+          })}
           {activeEvent && (
             <FlyToMarker
               position={[

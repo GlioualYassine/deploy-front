@@ -6,6 +6,7 @@ import { Icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Polyline } from "react-leaflet";
 import moment from "moment";
+import L from "leaflet";
 
 const FlyToMarker = dynamic(
   () => import("../../../../components/map/FlyToMarker"),
@@ -79,6 +80,53 @@ const MapComponent: React.FC<MapComponentProps> = ({
     });
   };
 
+  const createArrowIcon = (color: string, rotation: number) =>
+    L.divIcon({
+      className: "",
+      html: `
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
+          <defs>
+            <filter id="arrowShadow" x="-50%" y="-50%" width="200%" height="200%">
+              <feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#000" flood-opacity="0.4"/>
+            </filter>
+          </defs>
+  
+          <!-- Marker shape without inner circle -->
+          <path fill="${color}" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+  
+          <!-- Fancy arrow with rotation and shadow -->
+          <g transform="rotate(${rotation}, 12, 12)" filter="url(#arrowShadow)">
+            <path 
+              d="M12 6l-3 6h2v6h2v-6h2z" 
+              fill="#ffffff" 
+              stroke="#333" 
+              stroke-width="0.8"
+              stroke-linejoin="round"
+            />
+          </g>
+        </svg>
+      `,
+      iconSize: [40, 40],
+      iconAnchor: [20, 40], // bottom center anchor
+    });
+  
+  
+  
+
+  function calculateBearing(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const toRad = (deg: number) => (deg * Math.PI) / 180;
+    const toDeg = (rad: number) => (rad * 180) / Math.PI;
+  
+    const y = Math.sin(toRad(lon2 - lon1)) * Math.cos(toRad(lat2));
+    const x =
+      Math.cos(toRad(lat1)) * Math.sin(toRad(lat2)) -
+      Math.sin(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.cos(toRad(lon2 - lon1));
+    const brng = Math.atan2(y, x);
+    return (toDeg(brng) + 360) % 360;
+  }
+  
+
+
   if (!MapComponents) return <div>Loading map...</div>;
 
   const { MapContainer, TileLayer, Marker, Popup } = MapComponents;
@@ -115,35 +163,47 @@ const MapComponent: React.FC<MapComponentProps> = ({
           </Marker>
         ))}
 
-      {history.map((marker: any) => (
-        <Marker
-          key={marker.id}
-          position={[marker.latitude, marker.longitude]}
-          icon={coloredIcon(
-            parseFloat(marker.speed) > 120
-              ? "#35d7ca"
-              : parseFloat(marker.speed) > 100
-              ? "#71b0ff"
-              : parseFloat(marker.speed) > 80
-              ? "#bee131"
-              : parseFloat(marker.speed) > 60
-              ? "#54c254"
-              : parseFloat(marker.speed) > 5
-              ? "#f7f301"
-              : parseFloat(marker.speed) > 0
-              ? "red"
-              : "blue"
-          )}
-        >
-          <Popup>
-            <div className="text-center">
-              <span className="text-xs font-semibold">{marker.imei}</span>
-              <br />
-              <span className="text-xs font-semibold">{marker.speed} Km/h  -  {moment(marker?.timestamp).format('YYYY-MM-DD HH:mm:ss')}</span>
-            </div>
-          </Popup>
-        </Marker>
-      ))}
+{history.map((marker: any, index: number) => {
+  const prev = history[index - 1];
+  const bearing =
+    prev
+      ? calculateBearing( marker.latitude, marker.longitude , prev.latitude, prev.longitude)
+      : 0;
+
+  const color =
+    parseFloat(marker.speed) > 120
+      ? "#35d7ca"
+      : parseFloat(marker.speed) > 100
+      ? "#71b0ff"
+      : parseFloat(marker.speed) > 80
+      ? "#bee131"
+      : parseFloat(marker.speed) > 60
+      ? "#54c254"
+      : parseFloat(marker.speed) > 5
+      ? "#f7f301"
+      : parseFloat(marker.speed) > 0
+      ? "red"
+      : "blue";
+
+  return (
+    <Marker
+      key={marker.id}
+      position={[marker.latitude, marker.longitude]}
+      icon={createArrowIcon(color, bearing)}
+    >
+      <Popup>
+        <div className="text-center">
+          <span className="text-xs font-semibold">{marker.imei}</span>
+          <br />
+          <span className="text-xs font-semibold">
+            {marker.speed} Km/h - {moment(marker?.timestamp).format('YYYY-MM-DD HH:mm:ss')}
+          </span>
+        </div>
+      </Popup>
+    </Marker>
+  );
+})}
+
 
       {newMarkers && newMarkers?.lastPosition && (
         <FlyToMarker
