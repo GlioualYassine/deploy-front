@@ -85,7 +85,7 @@ const Page = () => {
 
   return (
     <div className="p-4 bg-background shadow-md rounded-lg mt-4">
-      <div className="flex gap-4 items-center mt-0 mb-4 z-50 border-b pb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 items-center mt-0 mb-4 z-50 border-b pb-4">
         {(user.role === "ROLE_GENERAL_ADMIN" ||
           user.role === "ROLE_COMPANY_ADMIN") && (
           <BaseSelectWithFetch
