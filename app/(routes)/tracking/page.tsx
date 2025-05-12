@@ -100,7 +100,7 @@ const Page = () => {
 
         {user.role === "ROLE_GENERAL_ADMIN" && (
           <BaseSelectWithFetch
-            placeholder="Choisir un entreprise"
+            placeholder="Choisir une entreprise"
             labelOption="nameCompany"
             valueOption="id"
             fetchUrl="company/getCompaniesBasicInfo"
