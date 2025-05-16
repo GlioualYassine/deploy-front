@@ -32,7 +32,24 @@ const Page = () => {
 
   const changeValue = (value: any) => {
     setSelectedValue(value);
-    fetchRapports({ ...filter, clientId: value  });
+    fetchRapports({ ...filter, clientId: value });
+  };
+
+  const exportDate = async () => {
+    const response = await axiosInstance.get("rapports/export", {
+      params: {
+        clientId: selectedValue,
+        size: 1000,
+      },
+      responseType: "blob",
+    });
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "rapport.xlsx");
+    document.body.appendChild(link);
+    link.click();
   };
 
   return (
@@ -41,20 +58,28 @@ const Page = () => {
         <h2 className="text-2xl">List des rapports</h2>
       </div>
       <div className="p-4 bg-background shadow-md rounded-lg mt-4">
-        <div className="flex items-center mb-2">
-          {(user.role === "ROLE_GENERAL_ADMIN" ||
-            user.role === "ROLE_COMPANY_ADMIN") && (
-            <BaseSelectWithFetch
-              placeholder="Choisir un Client"
-              labelOption="firstName"
-              valueOption="id"
-              fetchUrl="users/clients"
-              value={selectedValue}
-              setValue={changeValue}
-            />
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center mb-2">
+            {(user.role === "ROLE_GENERAL_ADMIN" ||
+              user.role === "ROLE_COMPANY_ADMIN") && (
+              <BaseSelectWithFetch
+                placeholder="Choisir un Client"
+                labelOption="firstName"
+                valueOption="id"
+                fetchUrl="users/clients"
+                value={selectedValue}
+                setValue={changeValue}
+              />
+            )}
+          </div>
 
-          )}
-           {/* <input
+          <Button
+            className="bg-primary hover:bg-blue-600 text-white end"
+            onClick={() => exportDate()}
+          >
+            Exporter <i className="fas fa-file-export"></i>
+          </Button>
+          {/* <input
   type="number"
   placeholder="Filtrer par vitesse"
   
@@ -65,7 +90,6 @@ const Page = () => {
 /> */}
         </div>
 
-       
         <DataTable
           columns={columns}
           data={rapports}

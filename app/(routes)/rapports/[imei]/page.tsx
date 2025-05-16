@@ -65,19 +65,54 @@ const Page = ({
     }
   };
 
+  const exportDate = async () => {
+    const response = await axiosInstance.get(
+      `rapports/${params.imei}/export-excel`,
+      {
+        params: {
+          startDate: selectedValue?.from
+            ? format(selectedValue.from, "yyyy-MM-dd")
+            : null,
+          endDate: selectedValue?.to
+            ? format(selectedValue.to, "yyyy-MM-dd")
+            : null,
+          size: 1000,
+        },
+        responseType: "blob",
+      }
+    );
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `rapport-${params.imei}.xlsx`);
+    document.body.appendChild(link);
+    link.click();
+  };
+
   return (
     <div>
       <div className="flex justify-between items-center">
         <h2 className="text-2xl">List des rapports</h2>
       </div>
       <div className="p-4 bg-background shadow-md rounded-lg mt-4">
-        <div className="flex items-center mb-2">
-          <BaseRangeDate
-            placeholder="Choisir un date"
-            value={selectedValue}
-            setValue={changeValue}
-          />
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center mb-2">
+            <BaseRangeDate
+              placeholder="Choisir un date"
+              value={selectedValue}
+              setValue={changeValue}
+            />
+          </div>
+
+          <Button
+            className="bg-primary hover:bg-blue-600 text-white end"
+            onClick={() => exportDate()}
+          >
+            Exporter <i className="fas fa-file-export"></i>
+          </Button>
         </div>
+
         <DataTable
           columns={columns}
           data={rapports}
